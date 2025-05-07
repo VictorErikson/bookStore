@@ -3,10 +3,13 @@ import Card from "../../components/Cards/Card";
 import fetchBooks from "../../services/fetchBooks";
 import type { Book } from "../../types/book";
 import type { User } from "../../types/user";
+import Warning from "../../components/warningMsgs/warning";
+import { colors } from "../../config/colors";
 
 const Home = () => {
   const [books, setBooks] = useState<Book[]>([]);
   const [user, setUser] = useState<User>();
+  const [warningMsg, setWarningMsg] = useState<string | null>(null);
 
   useEffect(() => {
     const loadBooks = async () => {
@@ -20,15 +23,23 @@ const Home = () => {
 
     loadBooks();
   }, []);
-
   return (
-    <body className="h-auto bg-[linear-gradient(180deg,_#421862_50%,_#290c41)] p-[25px] box-border">
-      <div className="flex gap-[20px] w-screen overflow-hidden box-border">
+    <main
+      style={{ background: colors.background }}
+      className="h-auto p-[25px] box-border"
+    >
+      {warningMsg && <Warning msg={warningMsg} setWarningMsg={setWarningMsg} />}
+      <div className="flex gap-[20px] w-screen overflow-hidden box-border h-[500px] flex items-center pl-[20px]">
         {books.map((book: Book) => (
-          <Card book={book} user={user} />
+          <Card
+            key={book.id}
+            book={book}
+            user={user}
+            setWarningMsg={setWarningMsg}
+          />
         ))}
       </div>
-    </body>
+    </main>
   );
 };
 

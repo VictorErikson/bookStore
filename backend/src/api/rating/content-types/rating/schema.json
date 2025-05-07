@@ -14,8 +14,7 @@
     "rating": {
       "max": 5,
       "min": 1,
-      "type": "integer",
-      "default": 2
+      "type": "integer"
     },
     "book": {
       "type": "relation",

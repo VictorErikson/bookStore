@@ -436,8 +436,7 @@ export interface ApiRatingRating extends Struct.CollectionTypeSchema {
           min: 1;
         },
         number
-      > &
-      Schema.Attribute.DefaultTo<2>;
+      >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
