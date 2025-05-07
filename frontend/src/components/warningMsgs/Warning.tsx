@@ -11,7 +11,7 @@ const Warning: React.FC<WarningProps> = ({ msg, setWarningMsg }) => {
       <div className="bg-white p-6 rounded-lg shadow-lg text-center">
         <h2 className="text-lg font-semibold mb-4">{msg}</h2>
         <button
-          className="bg-blue-500 text-white px-14 py-2 rounded px-4 hover:cursor-pointer bg-button hover:bg-buttonHover"
+          className="hoverColor my-button text-white px-14 py-2 rounded px-4 hover:cursor-pointer"
           onClick={() => setWarningMsg(null)}
         >
           Ok

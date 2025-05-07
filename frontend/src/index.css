@@ -1,1 +1,14 @@
 @import "tailwindcss";
+
+.my-button {
+    background-color: var(--color-button);
+  }
+.hoverColor:hover {
+    background: var(--color-button-hover)
+}
+
+#root {
+    background:  var(--color-background);
+    min-height: 100vh;
+    
+}

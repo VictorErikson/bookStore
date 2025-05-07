@@ -6,9 +6,14 @@ import type { User } from "../../types/user";
 import Warning from "../../components/warningMsgs/warning";
 import { colors } from "../../config/colors";
 
-const Home = () => {
+interface Props {
+  user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+}
+
+const Home: React.FC<Props> = ({ user, setUser }) => {
   const [books, setBooks] = useState<Book[]>([]);
-  const [user, setUser] = useState<User>();
+
   const [warningMsg, setWarningMsg] = useState<string | null>(null);
 
   useEffect(() => {
@@ -24,10 +29,7 @@ const Home = () => {
     loadBooks();
   }, []);
   return (
-    <main
-      style={{ background: colors.background }}
-      className="h-auto p-[25px] box-border"
-    >
+    <main className="p-[25px] box-border">
       {warningMsg && <Warning msg={warningMsg} setWarningMsg={setWarningMsg} />}
       <div className="flex gap-[20px] w-screen overflow-hidden box-border h-[500px] flex items-center pl-[20px]">
         {books.map((book: Book) => (
