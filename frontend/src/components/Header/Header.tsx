@@ -1,26 +1,39 @@
 import { Link } from "react-router-dom";
 import { colors } from "../../config/colors";
-import IconLogin from "../logos/IconLogin";
-import checkLoginStatus from "../../services/checkLoginStatus";
+import { useEffect, useState } from "react";
+import type { User } from "../../types/user";
+import HeadMenuUnAuth from "./HeadMenuUnAuth";
+import HeadMenuAuth from "./HeadMenuAuth";
+import LoginMsg from "../warningMsgs/loginMsg";
 
-const Header = () => {
-  checkLoginStatus();
+interface Props {
+  user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+}
+
+const Header: React.FC<Props> = ({ user, setUser }) => {
+  const [loginMsg, setLoginMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (loginMsg) {
+      const timeout = setTimeout(() => setLoginMsg(null), 5000);
+      return () => clearTimeout(timeout);
+    }
+  }, [loginMsg]);
 
   return (
     <header className="h-[100px] flex items-center justify-between w-screen px-[45px]">
+      {loginMsg && <LoginMsg msg={loginMsg} setLoginMsg={setLoginMsg} />}
       <Link to="/">
         <h1 style={{ color: colors.button }} className="text-5xl ">
           BookStore
         </h1>
       </Link>
-      <div className="headMenu">
-        <button
-          onClick={() => login()}
-          className="text-white flex gap-[10px] opacity-65 hover:opacity-100 hover:cursor-pointer"
-        >
-          Login <IconLogin />
-        </button>
-      </div>
+      {user ? (
+        <HeadMenuAuth setUser={setUser} />
+      ) : (
+        <HeadMenuUnAuth setLoginMsg={setLoginMsg} setUser={setUser} />
+      )}
     </header>
   );
 };

@@ -3,8 +3,7 @@ import Card from "../../components/Cards/Card";
 import fetchBooks from "../../services/fetchBooks";
 import type { Book } from "../../types/book";
 import type { User } from "../../types/user";
-import Warning from "../../components/warningMsgs/warning";
-import { colors } from "../../config/colors";
+import Warning from "../../components/warningMsgs/Warning";
 
 interface Props {
   user: User | null;

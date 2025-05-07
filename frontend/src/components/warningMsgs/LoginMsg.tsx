@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 
-interface WarningProps {
+interface LoginMsgProps {
   msg: string;
-  setWarningMsg: (msg: string | null) => void;
+  setLoginMsg: (msg: string | null) => void;
 }
 
-const Warning: React.FC<WarningProps> = ({ msg, setWarningMsg }) => {
+const LoginMsg: React.FC<LoginMsgProps> = ({ msg, setLoginMsg }) => {
   // useEffect(() => {
   //   if (warningMsg) {
   //     const timeout = setTimeout(() => setWarningMsg(null), 5000);
@@ -19,7 +19,7 @@ const Warning: React.FC<WarningProps> = ({ msg, setWarningMsg }) => {
         <h2 className="text-lg font-semibold mb-4">{msg}</h2>
         <button
           className="hoverColor my-button text-white px-14 py-2 rounded px-4 hover:cursor-pointer"
-          onClick={() => setWarningMsg(null)}
+          onClick={() => setLoginMsg(null)}
         >
           Ok
         </button>
@@ -28,4 +28,4 @@ const Warning: React.FC<WarningProps> = ({ msg, setWarningMsg }) => {
   );
 };
 
-export default Warning;
+export default LoginMsg;
