@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { StarredBook } from "../../../types/user";
 import IconHeart from "../../logos/IconHeart";
 import IconHeartFilled from "../../logos/IconHeartFilled";
+import checkLoginStatus from "../../../services/checkLoginStatus";
 
 interface Props {
   starred: StarredBook[];
@@ -11,6 +12,15 @@ interface Props {
 const LikeBtn: React.FC<Props> = ({ starred, bookId }) => {
   const isStarred = starred.some((item) => item.documentId === bookId);
   const [isHovered, setIsHovered] = useState(false);
+  const [isLoggedin, setIsLoggedin] = useState(false);
+
+  useEffect(() => {
+    const fetchLoginStatus = async () => {
+      const status = await checkLoginStatus();
+      setIsLoggedin(!!status);
+    };
+    fetchLoginStatus();
+  }, []);
 
   return (
     <div className=" w-[53px] w-[53px] flex-shrink-0 bg-[#35353f] p-[2px] rounded-full box-border flex items-center justify-center hover:cursor-pointer ">
@@ -23,6 +33,13 @@ const LikeBtn: React.FC<Props> = ({ starred, bookId }) => {
           className="button bg-[#35353f] w-[calc(100%-4px)] py-[10px] rounded-full m-[2px] flex items-center justify-center hover:cursor-pointer hover:bg-[#5c5c6b]"
           id="like"
           aria-label="Like"
+          onClick={
+            () => isLoggedin && toggleLike()
+
+            // isLoggedin
+            //   ? toggleLike
+            //   : setWarningMsg("Please login to be able to rate")
+          }
         >
           {isStarred ? (
             <IconHeartFilled />

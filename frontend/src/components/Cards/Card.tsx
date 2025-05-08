@@ -8,9 +8,10 @@ interface Props {
   book: Book;
   user?: User;
   setWarningMsg: (msg: string) => void;
+  refreshBook: () => Promise<void>;
 }
 
-const Card: React.FC<Props> = ({ book, user, setWarningMsg }) => {
+const Card: React.FC<Props> = ({ book, user, setWarningMsg, refreshBook }) => {
   return (
     <div
       id="card"
@@ -27,28 +28,11 @@ const Card: React.FC<Props> = ({ book, user, setWarningMsg }) => {
             </h2>
             <div className="text-gray-500 text-lg flex items-center">
               <StarRating
-                bookRatings={book.ratings}
-                // userRatings={[
-                //   {
-                //     id: 1,
-                //     documentId: "jir62guodyaxti1q7ke4k5hk",
-                //     rating: 1,
-                //     createdAt: "2025-05-06T09:04:03.003Z",
-                //     updatedAt: "2025-05-06T09:14:56.952Z",
-                //     publishedAt: null,
-                //   },
-                //   {
-                //     id: 13,
-                //     documentId: "jir62guodyaxti1q7ke4k5hk",
-                //     rating: 1,
-                //     createdAt: "2025-05-06T09:04:03.003Z",
-                //     updatedAt: "2025-05-06T09:14:56.952Z",
-                //     publishedAt: "2025-05-06T09:14:56.967Z",
-                //   },
-                // ]}
+                book={book}
+                user={user}
                 userRatings={user?.ratings ?? []}
-                bookId={book.documentId}
                 setWarningMsg={setWarningMsg}
+                refreshBook={refreshBook}
               />
             </div>
           </div>

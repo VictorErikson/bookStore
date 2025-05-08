@@ -1,31 +1,54 @@
-import React, { useState, useEffect } from "react";
-import type { Rating } from "../../../types/book";
-import type { UserRating } from "../../../types/user";
+import React, { useState, useEffect, useMemo } from "react";
+import type { Book } from "../../../types/book";
+import type { User, UserRating } from "../../../types/user";
 import IconStarFilled from "../../logos/IconStarFilled";
 import IconStar from "../../logos/IconStar";
 import rateBook from "../../../services/rateBook";
 import checkLoginStatus from "../../../services/checkLoginStatus";
 
 interface StarRatingProps {
-  bookRatings: Rating[]; // e.g., 3.6
+  book: Book;
+  user?: User;
   userRatings?: UserRating[];
-  bookId: string;
   setWarningMsg: (msg: string) => void;
+  refreshBook: () => Promise<void>;
 }
 
 const StarRating: React.FC<StarRatingProps> = ({
-  bookRatings,
+  book,
+  user,
   userRatings,
-  bookId,
   setWarningMsg,
+  refreshBook,
 }) => {
   const [hoveredStar, setHoveredStar] = useState<number | null>(null);
   const [isLoggedin, setIsLoggedin] = useState(false);
-  const bookDocumentIds = bookRatings.map((rating) => rating.documentId);
+  //   let bookDocumentIds: string[] = [];
+  const bookRatings = book.ratings;
+  //   if (bookRatings) {
+  //     bookDocumentIds = bookRatings.map((rating) => rating.documentId);
+  //   }
+  //   const userRating = book.ratings.find((rating) => rating.users_permissions_user?.documentId === userHasRated.documentId)
 
-  let userRating = null;
-  let userHasRated = false;
+  //Byttes ut Mot Memo
 
+  //   let userRating = null;
+  //   let userRatingId = null;
+  //   let userHasRated = false;
+  const { userRating, userRatingId, userHasRated } = useMemo(() => {
+    if (!user?.ratings)
+      return { userRating: null, userRatingId: null, userHasRated: false };
+
+    const match = user.ratings.find(
+      (rating) => rating.book?.documentId === book.documentId
+    );
+
+    return {
+      userRating: match?.rating ?? null,
+      userRatingId: match ?? null,
+      userHasRated: !!match,
+    };
+  }, [user?.ratings, book.documentId]);
   //check loginstatus
 
   useEffect(() => {
@@ -36,25 +59,37 @@ const StarRating: React.FC<StarRatingProps> = ({
     fetchLoginStatus();
   }, []);
 
-  if (userRatings) {
-    const match = userRatings.find((rating) =>
-      bookDocumentIds.includes(rating.documentId)
-    );
+  //Byttes ut Mot Memo
 
-    userHasRated = !!match; // true if a match was found
-    userRating = match?.rating ?? null;
-  }
+  //   if (userRatings) {
+  //     const match = user?.ratings.find(
+  //       (rating) => rating.book?.documentId === book.documentId
+  //     );
+
+  //     userHasRated = !!match; // true if a match was found
+  //     userRating = match?.rating ?? null;
+  //     userRatingId = match ?? null;
+  //   }
 
   //count our avg rating
 
   let totalRatings = 0;
 
-  bookRatings.forEach((rating) => {
-    totalRatings += rating.rating;
-  });
-  const averageRatingUneven = totalRatings / bookRatings.length;
-  const averageRatingEven = Math.round(averageRatingUneven);
+  let averageRatingEven: number;
 
+  if (bookRatings) {
+    bookRatings.forEach((rating) => {
+      totalRatings += rating.rating;
+    });
+    const averageRatingUneven = totalRatings / bookRatings.length;
+    averageRatingEven = Math.round(averageRatingUneven);
+  }
+  //   console.log(
+  //     "StarsRating- userRatingId:",
+  //     userRatingId,
+  //     "userHasRated: ",
+  //     userHasRated
+  //   );
   const stars = Array.from({ length: 5 }).map((_, i) => {
     let icon;
 
@@ -64,7 +99,14 @@ const StarRating: React.FC<StarRatingProps> = ({
           <span
             onClick={() =>
               isLoggedin
-                ? rateBook(i, bookId)
+                ? rateBook(
+                    i,
+                    userRatingId,
+                    userHasRated,
+                    user,
+                    book,
+                    refreshBook
+                  )
                 : setWarningMsg("Please login to be able to rate")
             }
           >
@@ -73,7 +115,7 @@ const StarRating: React.FC<StarRatingProps> = ({
         ) : (
           <IconStar />
         );
-    } else if (userHasRated) {
+    } else if (userHasRated && userRating) {
       icon =
         i < userRating ? (
           <IconStarFilled color="#b36f00" />
@@ -107,7 +149,9 @@ const StarRating: React.FC<StarRatingProps> = ({
         }}
       >
         {stars}
-        <p className="pl-[10px]">({bookRatings.length || 0})</p>
+        {bookRatings && (
+          <p className="pl-[10px]">({bookRatings.length || 0})</p>
+        )}
       </div>
     </>
   );

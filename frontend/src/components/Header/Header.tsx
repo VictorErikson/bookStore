@@ -30,7 +30,7 @@ const Header: React.FC<Props> = ({ user, setUser }) => {
         </h1>
       </Link>
       {user ? (
-        <HeadMenuAuth setUser={setUser} />
+        <HeadMenuAuth setLoginMsg={setLoginMsg} setUser={setUser} />
       ) : (
         <HeadMenuUnAuth setLoginMsg={setLoginMsg} setUser={setUser} />
       )}

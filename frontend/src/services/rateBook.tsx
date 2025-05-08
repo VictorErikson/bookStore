@@ -1,27 +1,63 @@
 import axios from "axios";
 import { BASE_URL } from "../config/api";
+import type { User, UserRating } from "../types/user";
+import type { Book } from "../types/book";
 
-const rateBook = async <T,>(score: number, bookId: string): Promise<T> => {
+const rateBook = async <T,>(
+  score: number,
+  rating: UserRating | null,
+  userHasRated: boolean,
+  user: User,
+  book: Book,
+  refreshBook: () => Promise<void>
+): Promise<T> => {
   const postData = {
     data: {
-      ratings: score,
+      rating: score + 1,
+      book: book.documentId,
+      users_permissions_user: user.documentId,
+    },
+  };
+  const updateData = {
+    data: {
+      rating: score + 1,
     },
   };
 
-  try {
-    const response = await axios.put<T>(
-      `${BASE_URL}/api/books/${bookId}?populate=*`,
-      postData,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-        },
-      }
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error updating rating:", error);
-    return Promise.reject(error);
+  if (userHasRated && rating) {
+    try {
+      const response = await axios.put<T>(
+        `${BASE_URL}/api/ratings/${rating.documentId}`,
+        updateData,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+          },
+        }
+      );
+      await refreshBook();
+      return response.data;
+    } catch (error) {
+      console.error("Error updating rating:", error);
+      return Promise.reject(error);
+    }
+  } else {
+    try {
+      const response = await axios.post<T>(
+        `${BASE_URL}/api/ratings?populate=*`,
+        postData,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+          },
+        }
+      );
+      await refreshBook();
+      return response.data;
+    } catch (error) {
+      console.error("Error updating rating:", error);
+      return Promise.reject(error);
+    }
   }
 };
 

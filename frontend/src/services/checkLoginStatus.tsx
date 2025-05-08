@@ -15,10 +15,9 @@ const checkLoginStatus = async () => {
   const jwt = sessionStorage.getItem("token");
   if (jwt) {
     const userData = await getData<User>(
-      `${BASE_URL}/api/users/me?populate=*`,
+      `${BASE_URL}/api/users/me?pLevel=4`,
       jwt
     );
-    console.log("logged in");
     return userData;
   }
   console.log("NOT logged in");

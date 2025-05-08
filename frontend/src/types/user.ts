@@ -1,3 +1,5 @@
+import type { Book, Cover } from "./book";
+
 export interface UserRating {
     id: number;
     documentId: string;
@@ -5,6 +7,7 @@ export interface UserRating {
     createdAt: string;
     updatedAt: string;
     publishedAt: string | null;
+    book: Book | null
   }
   
   export interface StarredBook {
@@ -16,9 +19,10 @@ export interface UserRating {
     releasedate: string;
     createdAt: string;
     updatedAt: string;
-    publishedAt: string | null;
+    publishedAt: string;
     description: string;
     price: number;
+    cover?: Cover;
   }
   
   export interface User {
