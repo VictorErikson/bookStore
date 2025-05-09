@@ -63,6 +63,18 @@ export interface Book {
   price: number;
   cover?: Cover;
   ratings?: Rating[];
+  liked?: LikedUser[];
 }
 
-
+export interface LikedUser {
+  id: number;
+  documentId: string;
+  username: string;
+  email: string;
+  provider: string;
+  confirmed: boolean;
+  blocked: boolean;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+}

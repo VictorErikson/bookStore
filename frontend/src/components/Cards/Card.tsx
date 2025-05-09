@@ -9,9 +9,22 @@ interface Props {
   user?: User;
   setWarningMsg: (msg: string) => void;
   refreshBook: () => Promise<void>;
+  isLoggedin: boolean;
+  setIsLoggedin: React.Dispatch<React.SetStateAction<boolean>>;
+  setBooks: React.Dispatch<React.SetStateAction<Book[]>>;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
 }
 
-const Card: React.FC<Props> = ({ book, user, setWarningMsg, refreshBook }) => {
+const Card: React.FC<Props> = ({
+  book,
+  user,
+  setWarningMsg,
+  refreshBook,
+  isLoggedin,
+  setIsLoggedin,
+  setBooks,
+  setUser,
+}) => {
   return (
     <div
       id="card"
@@ -33,6 +46,10 @@ const Card: React.FC<Props> = ({ book, user, setWarningMsg, refreshBook }) => {
                 userRatings={user?.ratings ?? []}
                 setWarningMsg={setWarningMsg}
                 refreshBook={refreshBook}
+                isLoggedin={isLoggedin}
+                setIsLoggedin={setIsLoggedin}
+                setBooks={setBooks}
+                setUser={setUser}
               />
             </div>
           </div>
@@ -52,7 +69,15 @@ const Card: React.FC<Props> = ({ book, user, setWarningMsg, refreshBook }) => {
               </button>
             </div>
           </div>
-          <LikeBtn starred={user?.starred ?? []} bookId={book.documentId} />
+          <LikeBtn
+            user={user}
+            book={book}
+            isLoggedin={isLoggedin}
+            setWarningMsg={setWarningMsg}
+            refreshBook={refreshBook}
+            setBooks={setBooks}
+            setUser={setUser}
+          />
         </div>
       </div>
     </div>

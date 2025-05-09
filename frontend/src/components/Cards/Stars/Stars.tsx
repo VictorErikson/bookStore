@@ -1,28 +1,35 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import type { Book } from "../../../types/book";
 import type { User, UserRating } from "../../../types/user";
 import IconStarFilled from "../../logos/IconStarFilled";
 import IconStar from "../../logos/IconStar";
 import rateBook from "../../../services/rateBook";
+import fetchData from "../../../services/fetchData";
+import { BASE_URL } from "../../../config/api";
 import checkLoginStatus from "../../../services/checkLoginStatus";
+// import checkLoginStatus from "../../../services/checkLoginStatus";
 
 interface StarRatingProps {
   book: Book;
   user?: User;
   userRatings?: UserRating[];
   setWarningMsg: (msg: string) => void;
-  refreshBook: () => Promise<void>;
+  isLoggedin: boolean;
+  setIsLoggedin: React.Dispatch<React.SetStateAction<boolean>>;
+  setBooks: React.Dispatch<React.SetStateAction<Book[]>>;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
 }
 
 const StarRating: React.FC<StarRatingProps> = ({
   book,
   user,
-  userRatings,
   setWarningMsg,
-  refreshBook,
+  isLoggedin,
+  setBooks,
+  setUser,
 }) => {
   const [hoveredStar, setHoveredStar] = useState<number | null>(null);
-  const [isLoggedin, setIsLoggedin] = useState(false);
+  //   const [isLoggedin, setIsLoggedin] = useState(false);
   //   let bookDocumentIds: string[] = [];
   const bookRatings = book.ratings;
   //   if (bookRatings) {
@@ -51,13 +58,13 @@ const StarRating: React.FC<StarRatingProps> = ({
   }, [user?.ratings, book.documentId]);
   //check loginstatus
 
-  useEffect(() => {
-    const fetchLoginStatus = async () => {
-      const status = await checkLoginStatus();
-      setIsLoggedin(!!status);
-    };
-    fetchLoginStatus();
-  }, []);
+  //   useEffect(() => {
+  //     const fetchLoginStatus = async () => {
+  //       const status = await checkLoginStatus();
+  //       setIsLoggedin(!!status);
+  //     };
+  //     fetchLoginStatus();
+  //   }, []);
 
   //Byttes ut Mot Memo
 
@@ -97,18 +104,27 @@ const StarRating: React.FC<StarRatingProps> = ({
       icon =
         i <= hoveredStar ? (
           <span
-            onClick={() =>
-              isLoggedin
-                ? rateBook(
-                    i,
-                    userRatingId,
-                    userHasRated,
-                    user,
-                    book,
-                    refreshBook
+            onClick={async () => {
+              if (isLoggedin) {
+                await rateBook(i, userRatingId, userHasRated, user, book);
+                // console.log(response);
+                const responseBook = await fetchData<{ data: Book }>(
+                  BASE_URL + `/api/books/${book.documentId}?populate=*`
+                );
+                // const responseUser = await fetchData<{ data: User }>(
+                //   BASE_URL + `/api/users/${user?.documentId}?populate=*`
+                // );
+                const responseUser = await checkLoginStatus();
+                setUser(responseUser);
+                setBooks((prev) =>
+                  prev.map((b) =>
+                    b.documentId === book.documentId ? responseBook.data : b
                   )
-                : setWarningMsg("Please login to be able to rate")
-            }
+                );
+              } else {
+                setWarningMsg("Please login to be able to rate");
+              }
+            }}
           >
             <IconStarFilled color="#f7e66f" />
           </span>

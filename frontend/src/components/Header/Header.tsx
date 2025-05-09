@@ -9,9 +9,16 @@ import LoginMsg from "../warningMsgs/loginMsg";
 interface Props {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  isLoggedin: boolean;
+  setIsLoggedin: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Header: React.FC<Props> = ({ user, setUser }) => {
+const Header: React.FC<Props> = ({
+  user,
+  setUser,
+  isLoggedin,
+  setIsLoggedin,
+}) => {
   const [loginMsg, setLoginMsg] = useState<string | null>(null);
 
   useEffect(() => {
@@ -30,9 +37,19 @@ const Header: React.FC<Props> = ({ user, setUser }) => {
         </h1>
       </Link>
       {user ? (
-        <HeadMenuAuth setLoginMsg={setLoginMsg} setUser={setUser} />
+        <HeadMenuAuth
+          setLoginMsg={setLoginMsg}
+          setUser={setUser}
+          isLoggedin={isLoggedin}
+          setIsLoggedin={setIsLoggedin}
+        />
       ) : (
-        <HeadMenuUnAuth setLoginMsg={setLoginMsg} setUser={setUser} />
+        <HeadMenuUnAuth
+          setLoginMsg={setLoginMsg}
+          setUser={setUser}
+          isLoggedin={isLoggedin}
+          setIsLoggedin={setIsLoggedin}
+        />
       )}
     </header>
   );

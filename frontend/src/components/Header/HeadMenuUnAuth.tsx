@@ -7,9 +7,16 @@ import checkLoginStatus from "../../services/checkLoginStatus";
 interface MenuProps {
   setLoginMsg: (msg: string | null) => void;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  isLoggedin: boolean;
+  setIsLoggedin: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const HeadMenuUnAuth: React.FC<MenuProps> = ({ setLoginMsg, setUser }) => {
+const HeadMenuUnAuth: React.FC<MenuProps> = ({
+  setLoginMsg,
+  setUser,
+  isLoggedin,
+  setIsLoggedin,
+}) => {
   const usernameRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 
@@ -32,6 +39,14 @@ const HeadMenuUnAuth: React.FC<MenuProps> = ({ setLoginMsg, setUser }) => {
       sessionStorage.setItem("token", response.data.jwt);
       const fetchedUser = await checkLoginStatus();
       setUser(fetchedUser);
+      //   useEffect(() => {
+      //     const fetchLoginStatus = async () => {
+      //       const status = await checkLoginStatus();
+      //       setIsLoggedin(!!status);
+      //     };
+      //     fetchLoginStatus();
+      //   }, []);
+      setIsLoggedin(!!fetchedUser);
       setLoginMsg("Login was successful!");
     } catch (error: any) {
       if (axios.isAxiosError(error)) {

@@ -4,12 +4,20 @@ import IconLogin from "../logos/IconLogin";
 interface MenuProps {
   setLoginMsg: (msg: string | null) => void;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  isLoggedin: boolean;
+  setIsLoggedin: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const HeadMenuAuth: React.FC<MenuProps> = ({ setLoginMsg, setUser }) => {
+const HeadMenuAuth: React.FC<MenuProps> = ({
+  setLoginMsg,
+  setUser,
+  isLoggedin,
+  setIsLoggedin,
+}) => {
   const logout = () => {
     sessionStorage.removeItem("token");
     setUser(null);
+    setIsLoggedin(false);
   };
 
   return (

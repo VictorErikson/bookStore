@@ -8,11 +8,12 @@ import checkLoginStatus from "./services/checkLoginStatus";
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoggedin, setIsLoggedin] = useState(false);
 
   useEffect(() => {
     const checkLogin = async () => {
       const userData = await checkLoginStatus();
-
+      setIsLoggedin(!!userData);
       setUser(userData);
     };
     checkLogin();
@@ -20,9 +21,24 @@ function App() {
 
   return (
     <Router>
-      <Header user={user} setUser={setUser} />
+      <Header
+        user={user}
+        setUser={setUser}
+        isLoggedin={isLoggedin}
+        setIsLoggedin={setIsLoggedin}
+      />
       <Routes>
-        <Route path="/" element={<Home user={user} setUser={setUser} />} />
+        <Route
+          path="/"
+          element={
+            <Home
+              user={user}
+              setUser={setUser}
+              isLoggedin={isLoggedin}
+              setIsLoggedin={setIsLoggedin}
+            />
+          }
+        />
       </Routes>
     </Router>
   );

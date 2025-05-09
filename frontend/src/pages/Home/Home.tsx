@@ -10,26 +10,34 @@ import { BASE_URL } from "../../config/api";
 interface Props {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  isLoggedin: boolean;
+  setIsLoggedin: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Home: React.FC<Props> = ({ user, setUser }) => {
+const Home: React.FC<Props> = ({
+  user,
+  setUser,
+  isLoggedin,
+  setIsLoggedin,
+}) => {
   const [books, setBooks] = useState<Book[]>([]);
-  // const [userLikedIds, setUserLikedIds] = useState<string>();
-  // const [userRatedIds, setUserRatedIds] = useState<string>();
+  useEffect(() => {
+    console.log("Books updated:", books);
+  }, [books]);
 
   const [warningMsg, setWarningMsg] = useState<string | null>(null);
 
-  const refreshBook = async (bookId: string) => {
-    const response = await fetchData<{ data: Book }>(
-      BASE_URL + `/api/books/${bookId}?populate=*`
-    );
-    console.log("response in refreshBook: ", response);
-    const updatedBook = response.data;
+  // const refreshBook = async (bookId: string) => {
+  //   const response = await fetchData<{ data: Book }>(
+  //     BASE_URL + `/api/books/${bookId}?populate=*`
+  //   );
+  //   console.log("response in refreshBook: ", response);
+  //   const updatedBook = response.data;
 
-    setBooks((prev) =>
-      prev.map((book) => (book.documentId === bookId ? updatedBook : book))
-    );
-  };
+  //   setBooks((prev) =>
+  //     prev.map((book) => (book.documentId === bookId ? updatedBook : book))
+  //   );
+  // };
 
   useEffect(() => {
     const loadBooks = async () => {
@@ -58,7 +66,10 @@ const Home: React.FC<Props> = ({ user, setUser }) => {
                     book={book}
                     user={user}
                     setWarningMsg={setWarningMsg}
-                    refreshBook={() => refreshBook(book.documentId)}
+                    isLoggedin={isLoggedin}
+                    setIsLoggedin={setIsLoggedin}
+                    setBooks={setBooks}
+                    setUser={setUser}
                   />
                 )
             )}
@@ -72,6 +83,9 @@ const Home: React.FC<Props> = ({ user, setUser }) => {
               book={book}
               user={user}
               setWarningMsg={setWarningMsg}
+              isLoggedin={isLoggedin}
+              setIsLoggedin={setIsLoggedin}
+              setBooks={setBooks}
             />
           ))}
         </div>

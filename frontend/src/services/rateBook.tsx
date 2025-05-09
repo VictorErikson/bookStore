@@ -8,8 +8,8 @@ const rateBook = async <T,>(
   rating: UserRating | null,
   userHasRated: boolean,
   user: User,
-  book: Book,
-  refreshBook: () => Promise<void>
+  book: Book
+  //   refreshBook: () => Promise<void>,
 ): Promise<T> => {
   const postData = {
     data: {
@@ -18,6 +18,7 @@ const rateBook = async <T,>(
       users_permissions_user: user.documentId,
     },
   };
+
   const updateData = {
     data: {
       rating: score + 1,
@@ -27,7 +28,7 @@ const rateBook = async <T,>(
   if (userHasRated && rating) {
     try {
       const response = await axios.put<T>(
-        `${BASE_URL}/api/ratings/${rating.documentId}`,
+        `${BASE_URL}/api/ratings/${rating.documentId}?populate=*`,
         updateData,
         {
           headers: {
@@ -35,7 +36,8 @@ const rateBook = async <T,>(
           },
         }
       );
-      await refreshBook();
+      //   await refreshBook();
+
       return response.data;
     } catch (error) {
       console.error("Error updating rating:", error);
@@ -52,7 +54,8 @@ const rateBook = async <T,>(
           },
         }
       );
-      await refreshBook();
+      //   await refreshBook();
+
       return response.data;
     } catch (error) {
       console.error("Error updating rating:", error);
