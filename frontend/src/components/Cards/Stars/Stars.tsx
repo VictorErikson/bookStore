@@ -29,19 +29,9 @@ const StarRating: React.FC<StarRatingProps> = ({
   setUser,
 }) => {
   const [hoveredStar, setHoveredStar] = useState<number | null>(null);
-  //   const [isLoggedin, setIsLoggedin] = useState(false);
-  //   let bookDocumentIds: string[] = [];
+
   const bookRatings = book.ratings;
-  //   if (bookRatings) {
-  //     bookDocumentIds = bookRatings.map((rating) => rating.documentId);
-  //   }
-  //   const userRating = book.ratings.find((rating) => rating.users_permissions_user?.documentId === userHasRated.documentId)
 
-  //Byttes ut Mot Memo
-
-  //   let userRating = null;
-  //   let userRatingId = null;
-  //   let userHasRated = false;
   const { userRating, userRatingId, userHasRated } = useMemo(() => {
     if (!user?.ratings)
       return { userRating: null, userRatingId: null, userHasRated: false };
@@ -56,29 +46,6 @@ const StarRating: React.FC<StarRatingProps> = ({
       userHasRated: !!match,
     };
   }, [user?.ratings, book.documentId]);
-  //check loginstatus
-
-  //   useEffect(() => {
-  //     const fetchLoginStatus = async () => {
-  //       const status = await checkLoginStatus();
-  //       setIsLoggedin(!!status);
-  //     };
-  //     fetchLoginStatus();
-  //   }, []);
-
-  //Byttes ut Mot Memo
-
-  //   if (userRatings) {
-  //     const match = user?.ratings.find(
-  //       (rating) => rating.book?.documentId === book.documentId
-  //     );
-
-  //     userHasRated = !!match; // true if a match was found
-  //     userRating = match?.rating ?? null;
-  //     userRatingId = match ?? null;
-  //   }
-
-  //count our avg rating
 
   let totalRatings = 0;
 
@@ -91,12 +58,7 @@ const StarRating: React.FC<StarRatingProps> = ({
     const averageRatingUneven = totalRatings / bookRatings.length;
     averageRatingEven = Math.round(averageRatingUneven);
   }
-  //   console.log(
-  //     "StarsRating- userRatingId:",
-  //     userRatingId,
-  //     "userHasRated: ",
-  //     userHasRated
-  //   );
+
   const stars = Array.from({ length: 5 }).map((_, i) => {
     let icon;
 
@@ -107,13 +69,10 @@ const StarRating: React.FC<StarRatingProps> = ({
             onClick={async () => {
               if (isLoggedin) {
                 await rateBook(i, userRatingId, userHasRated, user, book);
-                // console.log(response);
                 const responseBook = await fetchData<{ data: Book }>(
                   BASE_URL + `/api/books/${book.documentId}?populate=*`
                 );
-                // const responseUser = await fetchData<{ data: User }>(
-                //   BASE_URL + `/api/users/${user?.documentId}?populate=*`
-                // );
+                console.log("bookRatings: ", bookRatings);
                 const responseUser = await checkLoginStatus();
                 setUser(responseUser);
                 setBooks((prev) =>

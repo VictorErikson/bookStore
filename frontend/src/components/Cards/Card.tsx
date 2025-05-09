@@ -8,7 +8,6 @@ interface Props {
   book: Book;
   user?: User;
   setWarningMsg: (msg: string) => void;
-  refreshBook: () => Promise<void>;
   isLoggedin: boolean;
   setIsLoggedin: React.Dispatch<React.SetStateAction<boolean>>;
   setBooks: React.Dispatch<React.SetStateAction<Book[]>>;
@@ -19,7 +18,6 @@ const Card: React.FC<Props> = ({
   book,
   user,
   setWarningMsg,
-  refreshBook,
   isLoggedin,
   setIsLoggedin,
   setBooks,
@@ -30,7 +28,7 @@ const Card: React.FC<Props> = ({
       id="card"
       className="w-[270px] h-[456px] flex-shrink-0 bg-contain bg-no-repeat bg-top flex flex-col justify-end shadow-2xl rounded-t-3xl rounded-b-3xl duration-400 hover:scale-105 "
       style={{
-        backgroundImage: `url(${BASE_URL + book.cover.url})`,
+        backgroundImage: `url(${BASE_URL + book.cover?.url})`,
       }}
     >
       <div className="bottom h-[205px] bg-[#22222e] flex flex-col justify-between px-[20px] py-[15px] gap-[5px] rounded-br-xl rounded-bl-xl rounded-tr-[80px]">
@@ -45,7 +43,6 @@ const Card: React.FC<Props> = ({
                 user={user}
                 userRatings={user?.ratings ?? []}
                 setWarningMsg={setWarningMsg}
-                refreshBook={refreshBook}
                 isLoggedin={isLoggedin}
                 setIsLoggedin={setIsLoggedin}
                 setBooks={setBooks}
@@ -74,7 +71,6 @@ const Card: React.FC<Props> = ({
             book={book}
             isLoggedin={isLoggedin}
             setWarningMsg={setWarningMsg}
-            refreshBook={refreshBook}
             setBooks={setBooks}
             setUser={setUser}
           />

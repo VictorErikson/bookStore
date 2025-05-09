@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { User } from "../../../types/user";
 import IconHeart from "../../logos/IconHeart";
 import IconHeartFilled from "../../logos/IconHeartFilled";
@@ -26,7 +26,11 @@ const LikeBtn: React.FC<Props> = ({
   const [isLiked, setIsLiked] = useState(
     user?.starred.some((item) => item.documentId === book.documentId) ?? false
   );
-
+  useEffect(() => {
+    setIsLiked(
+      user?.starred.some((item) => item.documentId === book.documentId) ?? false
+    );
+  }, [user?.starred, book.documentId]);
   const [isHovered, setIsHovered] = useState(false);
 
   const toggleLike = async (book: Book) => {

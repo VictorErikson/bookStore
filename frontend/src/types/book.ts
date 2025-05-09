@@ -6,7 +6,7 @@ export interface Rating {
   rating: RatingValue;
   createdAt: string;
   updatedAt: string;
-  publishedAt: string;
+  publishedAt: string | null;
 }
 
 export interface ImageFormat {
@@ -58,7 +58,7 @@ export interface Book {
   releasedate: string;
   createdAt: string;
   updatedAt: string;
-  publishedAt: string;
+  publishedAt: string | null;
   description: string;
   price: number;
   cover?: Cover;
