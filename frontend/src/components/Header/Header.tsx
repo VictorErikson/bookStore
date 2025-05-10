@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import type { User } from "../../types/user";
 import HeadMenuUnAuth from "./HeadMenuUnAuth";
 import HeadMenuAuth from "./HeadMenuAuth";
-import LoginMsg from "../warningMsgs/loginMsg";
+import LoginMsg from "../warningMsgs/LoginMsg";
 
 interface Props {
   user: User | null;
@@ -32,7 +32,7 @@ const Header: React.FC<Props> = ({
     <header className="h-[100px] flex items-center justify-between w-screen px-[45px]">
       {loginMsg && <LoginMsg msg={loginMsg} setLoginMsg={setLoginMsg} />}
       <Link to="/">
-        <h1 style={{ color: colors.button }} className="text-5xl ">
+        <h1 id="logo" style={{ color: colors.button }} className="text-5xl ">
           BookStore
         </h1>
       </Link>

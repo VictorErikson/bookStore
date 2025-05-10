@@ -2,3 +2,22 @@
   box-sizing: border-box;
   overflow: hidden;
 }
+
+@keyframes scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(calc(-1 * var(--block-shift))); }
+}
+
+.animate-scroll {
+  animation: scroll 100s linear infinite;
+  will-change: transform;
+  --block-shift: 0px;
+}
+
+.animate-scroll-right {
+  animation: scroll 100s linear infinite;
+  animation-direction: reverse;
+  will-change: transform;
+  --block-shift: 0px;
+}
+

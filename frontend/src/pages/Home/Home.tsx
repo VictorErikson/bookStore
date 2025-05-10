@@ -139,6 +139,7 @@ const Home: React.FC<Props> = ({
         </div>
       ) : (
         <>
+          <BookCarousel />
           <div className="flex gap-[20px] w-screen overflow-hidden box-border py-[45px] flex items-center pl-[20px]">
             {books.map((book: Book) => (
               <Card
@@ -152,7 +153,6 @@ const Home: React.FC<Props> = ({
               />
             ))}
           </div>
-          <BookCarousel />
         </>
       )}
     </main>
