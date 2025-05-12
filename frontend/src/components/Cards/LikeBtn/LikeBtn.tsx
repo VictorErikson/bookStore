@@ -75,6 +75,7 @@ const LikeBtn: React.FC<Props> = ({
         onMouseLeave={() => setIsHovered(false)}
       >
         <button
+          onMouseDown={(e) => e.stopPropagation()}
           className="button bg-[#35353f] w-[calc(100%-4px)] py-[10px] rounded-full m-[2px] flex items-center justify-center hover:cursor-pointer hover:bg-[#5c5c6b]"
           id="like"
           aria-label="Like"

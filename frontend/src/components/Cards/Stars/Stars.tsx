@@ -103,6 +103,7 @@ const StarRating: React.FC<StarRatingProps> = ({
 
     return (
       <span
+        onMouseDown={(e) => e.stopPropagation()}
         key={i}
         onMouseEnter={() => setHoveredStar(i)}
         onMouseLeave={() => setHoveredStar(null)}

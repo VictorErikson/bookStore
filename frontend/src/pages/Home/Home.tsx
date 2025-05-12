@@ -8,6 +8,8 @@ import { BASE_URL } from "../../config/api";
 import fetchData from "../../services/fetchData";
 import BookCarousel from "../../components/BookCarousel/BookCarousel";
 import TrendingInfoBox from "../../components/TrendingInfoBox/TrendingInfoBox";
+import LogedinHome from "./LogedinHome";
+import ScrollableCards from "../../components/Cards/ScrollableCards";
 
 interface Props {
   user: User | null;
@@ -67,95 +69,32 @@ const Home: React.FC<Props> = ({
     <main className=" box-border">
       {warningMsg && <Warning msg={warningMsg} setWarningMsg={setWarningMsg} />}
       {user ? (
-        <div className="flex gap-[20px] w-screen overflow-hidden box-border h-full flex flex-col pl-[20px]">
-          {/* {user.starred.length > 0 && ( */}
-          {starredBooks.length > 0 && (
-            <>
-              <h3 className="text-3xl text-white">
-                {user.username}s Favourites ❤️
-              </h3>
-              <div className="flex gap-[25px]">
-                {starredBooks
-                  .filter(
-                    (b, i, a) =>
-                      a.findIndex((x) => x.documentId === b.documentId) === i
-                  )
-                  .map((book) => (
-                    <Card
-                      key={`liked-${book.documentId}`}
-                      book={book}
-                      user={user}
-                      setWarningMsg={setWarningMsg}
-                      isLoggedin={isLoggedin}
-                      setIsLoggedin={setIsLoggedin}
-                      setBooks={setBooks}
-                      setUser={setUser}
-                    />
-                  ))}
-              </div>
-            </>
-          )}
-          {/* {user.ratings.length > 0 && ( */}
-          {ratedBooks.length > 0 && (
-            <>
-              <h3 className="text-3xl text-white">
-                {user.username}s Ratings ⭐
-              </h3>
-              <div className="flex gap-[25px] pb-[25px]">
-                {ratedBooks
-                  .filter(
-                    (b, i, a) =>
-                      a.findIndex((x) => x.documentId === b.documentId) === i
-                  )
-                  .map((book) => (
-                    <Card
-                      key={`ratings-${book.documentId}`}
-                      book={book}
-                      user={user}
-                      setWarningMsg={setWarningMsg}
-                      isLoggedin={isLoggedin}
-                      setIsLoggedin={setIsLoggedin}
-                      setBooks={setBooks}
-                      setUser={setUser}
-                    />
-                  ))}
-              </div>
-            </>
-          )}
-          <h3 className="text-3xl text-white">Books 📖</h3>
-          <div className="flex gap-[25px] pb-[25px]">
-            {books.map((book: Book) => (
-              <Card
-                key={`books-${book.documentId}`}
-                book={book}
-                user={user}
-                setWarningMsg={setWarningMsg}
-                isLoggedin={isLoggedin}
-                setIsLoggedin={setIsLoggedin}
-                setBooks={setBooks}
-                setUser={setUser}
-              />
-            ))}
-          </div>
-        </div>
+        <LogedinHome
+          books={books}
+          user={user}
+          setWarningMsg={setWarningMsg}
+          isLoggedin={isLoggedin}
+          setIsLoggedin={setIsLoggedin}
+          setBooks={setBooks}
+          setUser={setUser}
+          starredBooks={starredBooks}
+          ratedBooks={ratedBooks}
+        />
       ) : (
         <>
           <TrendingInfoBox />
           <BookCarousel />
           <h3 className="text-3xl text-white pl-[25px]">Books 📖</h3>
-          <div className="flex gap-[20px] pl-[25px] w-screen overflow-hidden box-border py-[45px] flex items-center pl-[0px]">
-            {books.map((book: Book) => (
-              <Card
-                key={book.documentId}
-                book={book}
-                user={user}
-                setWarningMsg={setWarningMsg}
-                isLoggedin={isLoggedin}
-                setIsLoggedin={setIsLoggedin}
-                setBooks={setBooks}
-              />
-            ))}
-          </div>
+          <ScrollableCards
+            books={books}
+            setWarningMsg={setWarningMsg}
+            isLoggedin={isLoggedin}
+            setIsLoggedin={setIsLoggedin}
+            setBooks={setBooks}
+            setUser={setUser}
+            starredBooks={starredBooks}
+            ratedBooks={ratedBooks}
+          />
         </>
       )}
     </main>
