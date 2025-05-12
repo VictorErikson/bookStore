@@ -60,8 +60,13 @@ const LikeBtn: React.FC<Props> = ({
 
     // const updatedBook = await toggleLike(bookId); // call your backend here
 
+    // setBooks((prev) =>
+    //   prev.map((b) => (b.documentId === book.documentId.data ? updatedBook : b))
+    // );
     setBooks((prev) =>
-      prev.map((b) => (b.documentId === book.documentId.data ? updatedBook : b))
+      prev.map((b) =>
+        b.documentId === book.documentId ? { ...b, liked: updatedLikes } : b
+      )
     );
     const responseUser = await checkLoginStatus();
     setUser(responseUser);

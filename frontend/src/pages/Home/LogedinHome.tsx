@@ -32,7 +32,7 @@ const LogedinHome: React.FC<Props> = ({
       {starredBooks.length > 0 && (
         <>
           <h3 className="text-3xl text-white pl-[25px]">
-            {user.username}s Favourites ❤️
+            {user?.username}s Favourites ❤️
           </h3>
           <ScrollableCards
             books={starredBooks.filter(
@@ -53,7 +53,7 @@ const LogedinHome: React.FC<Props> = ({
       {ratedBooks.length > 0 && (
         <>
           <h3 className="text-3xl text-white pl-[25px]">
-            {user.username}s Ratings ⭐
+            {user?.username}s Ratings ⭐
           </h3>
           <ScrollableCards
             books={ratedBooks.filter(

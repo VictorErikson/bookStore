@@ -1,10 +1,10 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import type { Book } from "../../types/book";
 import type { User } from "../../types/user";
 import Card from "./Card";
 
 interface Props {
-  books: Book[];
+  books?: Book[];
   user?: User;
   setWarningMsg: (msg: string) => void;
   isLoggedin: boolean;
@@ -30,6 +30,16 @@ const ScrollableCards: React.FC<Props> = ({
   const isDragging = useRef(false);
   const startX = useRef(0);
   const initialScrollLeft = useRef(0);
+  const [sortby, setSortby] = useState<
+    | "priceRising"
+    | "priceFalling"
+    | "authorAZ"
+    | "authorZA"
+    | "titleAZ"
+    | "titleZA"
+    | "userScoreRising"
+    | "userScoreFalling"
+  >("titleAZ");
 
   // make sure we cancel drag if the mouse goes up anywhere on the page
   useEffect(() => {
@@ -71,7 +81,7 @@ const ScrollableCards: React.FC<Props> = ({
       onMouseDown={onMouseDown}
       onMouseMove={onMouseMove}
     >
-      {books.map((book) => (
+      {books?.map((book) => (
         <Card
           key={book.documentId}
           book={book}

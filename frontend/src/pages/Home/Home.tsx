@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Card from "../../components/Cards/Card";
 import fetchBooks from "../../services/fetchBooks";
 import type { Book } from "../../types/book";
@@ -28,6 +28,8 @@ const Home: React.FC<Props> = ({
   const [warningMsg, setWarningMsg] = useState<string | null>(null);
   const [starredBooks, setStarredBooks] = useState<Book[]>([]);
   const [ratedBooks, setRatedBooks] = useState<Book[]>([]);
+  const [trendingBooks, setTrendingBooks] = useState<Book[]>([]);
+  const trendingRef = useRef<HTMLDivElement>(null);
 
   const fetchBookById = async (documentId: string): Promise<Book> => {
     const response = await fetchData<{ data: Book }>(
@@ -65,24 +67,66 @@ const Home: React.FC<Props> = ({
     go();
   }, [user]);
 
+  useEffect(() => {
+    setTrendingBooks(
+      books?.filter(
+        (book) =>
+          book.ratings &&
+          book.ratings.reduce((sum, rating) => sum + rating.rating, 0) /
+            book.ratings?.length >=
+            4
+      )
+    );
+  }, [books]);
+
   return (
     <main className=" box-border">
       {warningMsg && <Warning msg={warningMsg} setWarningMsg={setWarningMsg} />}
       {user ? (
-        <LogedinHome
-          books={books}
-          user={user}
-          setWarningMsg={setWarningMsg}
-          isLoggedin={isLoggedin}
-          setIsLoggedin={setIsLoggedin}
-          setBooks={setBooks}
-          setUser={setUser}
-          starredBooks={starredBooks}
-          ratedBooks={ratedBooks}
-        />
+        <>
+          <TrendingInfoBox
+            onClickScroll={() =>
+              trendingRef.current?.scrollIntoView({ behavior: "smooth" })
+            }
+          />
+          <BookCarousel />
+          <LogedinHome
+            books={books}
+            user={user}
+            setWarningMsg={setWarningMsg}
+            isLoggedin={isLoggedin}
+            setIsLoggedin={setIsLoggedin}
+            setBooks={setBooks}
+            setUser={setUser}
+            starredBooks={starredBooks}
+            ratedBooks={ratedBooks}
+          />
+          {trendingBooks && (
+            <>
+              <h3 className="text-3xl text-white pl-[25px]">Trending ⭐</h3>
+              <div ref={trendingRef}>
+                <ScrollableCards
+                  books={trendingBooks}
+                  user={user}
+                  setWarningMsg={setWarningMsg}
+                  isLoggedin={isLoggedin}
+                  setIsLoggedin={setIsLoggedin}
+                  setBooks={setBooks}
+                  setUser={setUser}
+                  starredBooks={starredBooks}
+                  ratedBooks={ratedBooks}
+                />
+              </div>
+            </>
+          )}
+        </>
       ) : (
         <>
-          <TrendingInfoBox />
+          <TrendingInfoBox
+            onClickScroll={() =>
+              trendingRef.current?.scrollIntoView({ behavior: "smooth" })
+            }
+          />
           <BookCarousel />
           <h3 className="text-3xl text-white pl-[25px]">Books 📖</h3>
           <ScrollableCards
@@ -95,6 +139,23 @@ const Home: React.FC<Props> = ({
             starredBooks={starredBooks}
             ratedBooks={ratedBooks}
           />
+          {trendingBooks && (
+            <>
+              <h3 className="text-3xl text-white pl-[25px]">Trending ⭐</h3>
+              <div ref={trendingRef}>
+                <ScrollableCards
+                  books={trendingBooks}
+                  setWarningMsg={setWarningMsg}
+                  isLoggedin={isLoggedin}
+                  setIsLoggedin={setIsLoggedin}
+                  setBooks={setBooks}
+                  setUser={setUser}
+                  starredBooks={starredBooks}
+                  ratedBooks={ratedBooks}
+                />
+              </div>
+            </>
+          )}
         </>
       )}
     </main>

@@ -1,4 +1,8 @@
-const TrendingInfoBox = () => {
+interface Props {
+  onClickScroll?: () => void;
+}
+
+const TrendingInfoBox: React.FC<Props> = ({ onClickScroll }) => {
   return (
     <div className=" w-screen flex flex-col">
       <div className="trendingInfoBox text-white self-center flex items-between px-[92px] mt-[60px] w-screen max-w-[1311px]">
@@ -14,7 +18,8 @@ const TrendingInfoBox = () => {
           </p>
           <button
             className="py-[12px] px-[20px] 
-my-button rounded-lg mt-[40px]"
+my-button rounded-lg mt-[40px] hover:cursor-pointer"
+            onClick={onClickScroll}
           >
             Hot Right Now
           </button>
