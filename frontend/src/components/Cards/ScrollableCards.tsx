@@ -1,10 +1,11 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useMemo } from "react";
 import type { Book } from "../../types/book";
 import type { User } from "../../types/user";
 import Card from "./Card";
+import type { SortOption, SortOptionWithRatings } from "../../types/sorting";
 
 interface Props {
-  books?: Book[];
+  books: Book[];
   user?: User;
   setWarningMsg: (msg: string) => void;
   isLoggedin: boolean;
@@ -13,6 +14,7 @@ interface Props {
   setUser?: React.Dispatch<React.SetStateAction<User | null>>;
   starredBooks: Book[];
   ratedBooks: Book[];
+  sortBy: SortOption | SortOptionWithRatings;
 }
 
 const ScrollableCards: React.FC<Props> = ({
@@ -25,22 +27,64 @@ const ScrollableCards: React.FC<Props> = ({
   setUser,
   starredBooks,
   ratedBooks,
+  sortBy,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
   const startX = useRef(0);
   const initialScrollLeft = useRef(0);
-  const [sortby, setSortby] = useState<
-    | "priceRising"
-    | "priceFalling"
-    | "authorAZ"
-    | "authorZA"
-    | "titleAZ"
-    | "titleZA"
-    | "userScoreRising"
-    | "userScoreFalling"
-  >("titleAZ");
 
+  // sorting books
+
+  const sortedBooks = useMemo(() => {
+    const copy = [...books];
+    switch (sortBy) {
+      case "Price: Low to High":
+        return copy.sort((a, b) => a.price - b.price);
+      case "Price: High to Low":
+        return copy.sort((a, b) => b.price - a.price);
+      case "Author: A-z":
+        return copy.sort((a, b) =>
+          a.author.localeCompare(b.author, undefined, { sensitivity: "base" })
+        );
+      case "Author: Z-a":
+        return copy.sort((a, b) =>
+          b.author.localeCompare(a.author, undefined, { sensitivity: "base" })
+        );
+      case "Title: A-z":
+        return copy.sort((a, b) =>
+          a.title.localeCompare(b.title, undefined, { sensitivity: "base" })
+        );
+      case "Title: Z-a":
+        return copy.sort((a, b) =>
+          b.title.localeCompare(a.title, undefined, { sensitivity: "base" })
+        );
+      case "My Rating: Low to High":
+        return copy.sort((a, b) => {
+          const ratingA =
+            a.ratings.find((r) => r.documentId === user?.documentId)?.rating ??
+            0;
+          const ratingB =
+            b.ratings.find((r) => r.documentId === user?.documentId)?.rating ??
+            0;
+          return ratingA - ratingB;
+        });
+      case "My Rating: High to Low":
+        return copy.sort((a, b) => {
+          const ratingA =
+            b.ratings.find((r) => r.documentId === user?.documentId)?.rating ??
+            0;
+          const ratingB =
+            a.ratings.find((r) => r.documentId === user?.documentId)?.rating ??
+            0;
+          return ratingA - ratingB;
+        });
+      default:
+        return copy;
+    }
+  }, [books, sortBy]);
+
+  // draggable card-container
   // make sure we cancel drag if the mouse goes up anywhere on the page
   useEffect(() => {
     const handleMouseUp = () => {
@@ -81,7 +125,7 @@ const ScrollableCards: React.FC<Props> = ({
       onMouseDown={onMouseDown}
       onMouseMove={onMouseMove}
     >
-      {books?.map((book) => (
+      {sortedBooks.map((book) => (
         <Card
           key={book.documentId}
           book={book}

@@ -1,4 +1,5 @@
 import Card from "../../components/Cards/Card";
+import CardsSection from "../../components/Cards/CardsSection";
 import ScrollableCards from "../../components/Cards/ScrollableCards";
 import type { Book } from "../../types/book";
 import type { User } from "../../types/user";
@@ -71,7 +72,10 @@ const LogedinHome: React.FC<Props> = ({
           />
         </>
       )}
-      <h3 className="text-3xl text-white pl-[25px]">Books 📖</h3>
+      {/* <div className="flex w-full items-spacebetween">
+        <h3 className="text-3xl text-white pl-[25px]">Books 📖</h3>
+        <button></button>
+      </div>
       <ScrollableCards
         books={books}
         user={user}
@@ -82,6 +86,18 @@ const LogedinHome: React.FC<Props> = ({
         setUser={setUser}
         starredBooks={starredBooks}
         ratedBooks={ratedBooks}
+      /> */}
+      <CardsSection
+        books={books}
+        user={user}
+        setWarningMsg={setWarningMsg}
+        isLoggedin={isLoggedin}
+        setIsLoggedin={setIsLoggedin}
+        setBooks={setBooks}
+        setUser={setUser}
+        starredBooks={starredBooks}
+        ratedBooks={ratedBooks}
+        title={"Books 📖"}
       />
     </div>
   );
