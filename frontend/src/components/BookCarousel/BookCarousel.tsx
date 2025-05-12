@@ -30,7 +30,7 @@ const BookCarousel = () => {
   const N = carousel1Images.length; // e.g. 10
   const N2 = carousel2Images.length; // e.g. 10
   const G = 12; // gap in px
-  const W = "8%"; // each img’s width
+  const W = "7%"; // each img’s width
 
   const pool = [...carousel1Images, ...carousel1Images];
   const pool2 = [...carousel2Images, ...carousel2Images];
@@ -42,7 +42,7 @@ const BookCarousel = () => {
   //   const gapTotal = (N - 1) * 10;
 
   return (
-    <div className="overflow-hidden w-full flex flex-col gap-[15px] ">
+    <div className="overflow-hidden w-full flex flex-col gap-[15px] pt-[80px] pb-[80px]">
       <div
         className="flex animate-scroll pointer-events-none"
         style={

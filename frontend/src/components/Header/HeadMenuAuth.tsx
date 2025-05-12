@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { User } from "../../types/user";
 import IconLogin from "../logos/IconLogin";
 import IconMenu from "../logos/IconMenu";
-import DropdownMenu from "./dropdownMenu";
+import DropdownMenu from "./DropdownMenu";
 
 interface MenuProps {
   setLoginMsg: (msg: string | null) => void;

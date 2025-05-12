@@ -1,12 +1,21 @@
 type IconProps = {
   color?: string;
   size?: number;
+  btn?: boolean;
 };
 
-const IconLogin: React.FC<IconProps> = ({ color = "#FFFFFF", size = 24 }) => {
+const IconLogin: React.FC<IconProps> = ({
+  color = "#FFFFFF",
+  size = 24,
+  btn = false,
+}) => {
+  const className = btn
+    ? "IconLogin hover:cursor-pointer opacity-50 hover:opacity-100"
+    : "IconLogin";
+
   return (
     <svg
-      className="IconLogin"
+      className={className}
       xmlns="http://www.w3.org/2000/svg"
       height={size}
       viewBox="0 -960 960 960"

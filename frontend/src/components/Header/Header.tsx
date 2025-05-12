@@ -20,6 +20,12 @@ const Header: React.FC<Props> = ({
   setIsLoggedin,
 }) => {
   const [loginMsg, setLoginMsg] = useState<string | null>(null);
+  const [menuStatus, setMenuStatus] = useState("start");
+
+  const headerClasses =
+    menuStatus === "start"
+      ? "flex items-center justify-between w-screen max-w-[1311px] self-center px-[92px] py-[58px]"
+      : "flex items-center justify-between w-screen max-w-[1311px] self-center px-[92px] py-[40px]";
 
   useEffect(() => {
     if (loginMsg) {
@@ -29,29 +35,37 @@ const Header: React.FC<Props> = ({
   }, [loginMsg]);
 
   return (
-    <header className="h-[100px] flex items-center justify-between w-screen px-[45px]">
-      {loginMsg && <LoginMsg msg={loginMsg} setLoginMsg={setLoginMsg} />}
-      <Link to="/">
-        <h1 id="logo" style={{ color: colors.button }} className="text-5xl ">
-          BookStore
-        </h1>
-      </Link>
-      {user ? (
-        <HeadMenuAuth
-          setLoginMsg={setLoginMsg}
-          setUser={setUser}
-          isLoggedin={isLoggedin}
-          setIsLoggedin={setIsLoggedin}
-        />
-      ) : (
-        <HeadMenuUnAuth
-          setLoginMsg={setLoginMsg}
-          setUser={setUser}
-          isLoggedin={isLoggedin}
-          setIsLoggedin={setIsLoggedin}
-        />
-      )}
-    </header>
+    <div className=" w-screen flex flex-col">
+      <header className={headerClasses}>
+        {loginMsg && <LoginMsg msg={loginMsg} setLoginMsg={setLoginMsg} />}
+        <Link to="/">
+          <h1
+            id="logo"
+            style={{ color: colors.button }}
+            className="text-5xl font-serif font-bold"
+          >
+            BookStore
+          </h1>
+        </Link>
+        {user ? (
+          <HeadMenuAuth
+            setLoginMsg={setLoginMsg}
+            setUser={setUser}
+            isLoggedin={isLoggedin}
+            setIsLoggedin={setIsLoggedin}
+          />
+        ) : (
+          <HeadMenuUnAuth
+            setLoginMsg={setLoginMsg}
+            setUser={setUser}
+            isLoggedin={isLoggedin}
+            setIsLoggedin={setIsLoggedin}
+            setMenuStatus={setMenuStatus}
+            menuStatus={menuStatus}
+          />
+        )}
+      </header>
+    </div>
   );
 };
 

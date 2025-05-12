@@ -7,6 +7,7 @@ import Warning from "../../components/warningMsgs/Warning";
 import { BASE_URL } from "../../config/api";
 import fetchData from "../../services/fetchData";
 import BookCarousel from "../../components/BookCarousel/BookCarousel";
+import TrendingInfoBox from "../../components/TrendingInfoBox/TrendingInfoBox";
 
 interface Props {
   user: User | null;
@@ -63,7 +64,7 @@ const Home: React.FC<Props> = ({
   }, [user]);
 
   return (
-    <main className="p-[25px] box-border">
+    <main className=" box-border">
       {warningMsg && <Warning msg={warningMsg} setWarningMsg={setWarningMsg} />}
       {user ? (
         <div className="flex gap-[20px] w-screen overflow-hidden box-border h-full flex flex-col pl-[20px]">
@@ -139,8 +140,10 @@ const Home: React.FC<Props> = ({
         </div>
       ) : (
         <>
+          <TrendingInfoBox />
           <BookCarousel />
-          <div className="flex gap-[20px] w-screen overflow-hidden box-border py-[45px] flex items-center pl-[20px]">
+          <h3 className="text-3xl text-white pl-[25px]">Books 📖</h3>
+          <div className="flex gap-[20px] pl-[25px] w-screen overflow-hidden box-border py-[45px] flex items-center pl-[0px]">
             {books.map((book: Book) => (
               <Card
                 key={book.documentId}
@@ -160,131 +163,3 @@ const Home: React.FC<Props> = ({
 };
 
 export default Home;
-
-//INNAN DUPLIKETTER
-
-// import { useEffect, useState } from "react";
-// import Card from "../../components/Cards/Card";
-// import fetchBooks from "../../services/fetchBooks";
-// import type { Book } from "../../types/book";
-// import type { StarredBook, User, UserRating } from "../../types/user";
-// import Warning from "../../components/warningMsgs/Warning";
-
-// interface Props {
-//   user: User | null;
-//   setUser: React.Dispatch<React.SetStateAction<User | null>>;
-//   isLoggedin: boolean;
-//   setIsLoggedin: React.Dispatch<React.SetStateAction<boolean>>;
-// }
-
-// const Home: React.FC<Props> = ({
-//   user,
-//   setUser,
-//   isLoggedin,
-//   setIsLoggedin,
-// }) => {
-//   const [books, setBooks] = useState<Book[]>([]);
-
-//   const [warningMsg, setWarningMsg] = useState<string | null>(null);
-
-//   useEffect(() => {
-//     const loadBooks = async () => {
-//       try {
-//         const data = await fetchBooks();
-//         setBooks(data);
-//       } catch (error) {
-//         console.error("Failed to fetch books:", error);
-//       }
-//     };
-
-//     loadBooks();
-//   }, []);
-//   return (
-//     <main className="p-[25px] box-border">
-//       {warningMsg && <Warning msg={warningMsg} setWarningMsg={setWarningMsg} />}
-//       {user ? (
-//         <div className="flex gap-[20px] w-screen overflow-hidden box-border h-full flex flex-col pl-[20px]">
-//           {user.starred.length > 0 && (
-//             <>
-//               <h3 className="text-3xl text-white">
-//                 {user.username}s Favourites ❤️
-//               </h3>
-//               <div className="flex gap-[25px]">
-//                 {user.starred.map(
-//                   (book: StarredBook) =>
-//                     book.publishedAt !== null && (
-//                       <Card
-//                         key={book.id}
-//                         book={book}
-//                         user={user}
-//                         setWarningMsg={setWarningMsg}
-//                         isLoggedin={isLoggedin}
-//                         setIsLoggedin={setIsLoggedin}
-//                         setBooks={setBooks}
-//                         setUser={setUser}
-//                       />
-//                     )
-//                 )}
-//               </div>
-//             </>
-//           )}
-//           {user.ratings.length > 0 && (
-//             <>
-//               <h3 className="text-3xl text-white">
-//                 {user.username}s Ratings ⭐
-//               </h3>
-//               <div className="flex gap-[25px] pb-[25px]">
-//                 {user.ratings.map(
-//                   (rating: UserRating) =>
-//                     rating.book.publishedAt !== null && (
-//                       <Card
-//                         key={rating.id}
-//                         book={rating.book}
-//                         user={user}
-//                         setWarningMsg={setWarningMsg}
-//                         isLoggedin={isLoggedin}
-//                         setIsLoggedin={setIsLoggedin}
-//                         setBooks={setBooks}
-//                         setUser={setUser}
-//                       />
-//                     )
-//                 )}
-//               </div>
-//             </>
-//           )}
-//           <h3 className="text-3xl text-white">Books 📖</h3>
-//           <div className="flex gap-[25px] pb-[25px]">
-//             {books.map((book: Book) => (
-//               <Card
-//                 key={book.id}
-//                 book={book}
-//                 user={user}
-//                 setWarningMsg={setWarningMsg}
-//                 isLoggedin={isLoggedin}
-//                 setIsLoggedin={setIsLoggedin}
-//                 setBooks={setBooks}
-//                 setUser={setUser}
-//               />
-//             ))}
-//           </div>
-//         </div>
-//       ) : (
-//         <div className="flex gap-[20px] w-screen overflow-hidden box-border h-[500px] flex items-center pl-[20px]">
-//           {books.map((book: Book) => (
-//             <Card
-//               key={book.id}
-//               book={book}
-//               user={user}
-//               setWarningMsg={setWarningMsg}
-//               isLoggedin={isLoggedin}
-//               setIsLoggedin={setIsLoggedin}
-//               setBooks={setBooks}
-//             />
-//           ))}
-//         </div>
-//       )}
-//     </main>
-//   );
-// };
-
-// export default Home;
