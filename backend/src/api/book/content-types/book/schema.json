@@ -51,6 +51,14 @@
       "relation": "oneToMany",
       "target": "api::rating.rating",
       "mappedBy": "book"
+    },
+    "age": {
+      "type": "enumeration",
+      "enum": [
+        "child",
+        "youth",
+        "adult"
+      ]
     }
   }
 }

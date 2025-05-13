@@ -1,18 +1,9 @@
-import { useEffect } from "react";
-
 interface WarningProps {
   msg: string;
   setWarningMsg: (msg: string | null) => void;
 }
 
 const Warning: React.FC<WarningProps> = ({ msg, setWarningMsg }) => {
-  // useEffect(() => {
-  //   if (warningMsg) {
-  //     const timeout = setTimeout(() => setWarningMsg(null), 5000);
-  //     return () => clearTimeout(timeout);
-  //   }
-  // }, [warningMsg]);
-
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50">
       <div className="bg-white p-6 rounded-lg shadow-lg text-center min-w-[300px] opacity-98">

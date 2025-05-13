@@ -4,7 +4,7 @@ interface Props {
 
 const TrendingInfoBox: React.FC<Props> = ({ onClickScroll }) => {
   return (
-    <div className=" w-screen flex flex-col">
+    <div className="w-screen flex flex-col">
       <div className="trendingInfoBox text-white self-center flex items-between px-[92px] mt-[60px] w-screen max-w-[1311px]">
         <h2 className="text-5xl font-sans font-bold pr-[150px]">
           What's trending!

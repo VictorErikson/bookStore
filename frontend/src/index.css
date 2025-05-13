@@ -9,6 +9,31 @@
 
 #root {
     background:  var(--color-background);
+    
     min-height: 100vh;
     
+}
+
+#root.bg-sale {
+    position: relative;
+  background-image: url('../../frontend/public/assets/saleBackground.webp'); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+#root.bg-dark {
+   background:  #14141e;
+}
+
+#root.bg-sale::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.85); /* Adjust opacity */
+  z-index: 0;
+  pointer-events: none;
+}
+#root > * {
+  position: relative;
+  z-index: 0.1;
 }

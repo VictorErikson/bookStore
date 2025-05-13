@@ -11,6 +11,8 @@ import LogedinHome from "./LogedinHome";
 import CardsSection from "../../components/Cards/CardsSection";
 import SaleInfoBox from "../../components/SaleInfoBox/SaleInfoBox";
 import { useTheme } from "../../contexts/ThemeContext";
+import BookInfoBox from "../../components/BookInfoBox/BookInfoBox";
+import { useBookInfo } from "../../contexts/bookInfoContext";
 
 interface Props {
   user: User | null;
@@ -32,6 +34,7 @@ const Home: React.FC<Props> = ({
   const [trendingBooks, setTrendingBooks] = useState<Book[]>([]);
   const trendingRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
+  const { bookInfoBox, mousePos } = useBookInfo();
 
   const fetchBookById = async (documentId: string): Promise<Book> => {
     const response = await fetchData<{ data: Book }>(
@@ -39,6 +42,25 @@ const Home: React.FC<Props> = ({
     );
     return response.data;
   };
+
+  useEffect(() => {
+    const root = document.getElementById("root");
+    if (!root) return;
+    if (theme === "sale") {
+      root.classList.add("bg-sale");
+    } else {
+      root.classList.remove("bg-sale");
+    }
+    if (theme === "darkmode") {
+      root.classList.add("bg-dark");
+    } else {
+      root.classList.remove("bg-dark");
+    }
+  }, [theme]);
+
+  useEffect(() => {
+    console.log(theme);
+  }, [theme]);
 
   useEffect(() => {
     const loadBooks = async () => {
@@ -84,6 +106,28 @@ const Home: React.FC<Props> = ({
   return (
     <main className=" box-border">
       {warningMsg && <Warning msg={warningMsg} setWarningMsg={setWarningMsg} />}
+      {bookInfoBox && (
+        <div
+          style={{
+            position: "fixed",
+            top: mousePos.y + 10,
+            left: mousePos.x + 10,
+            zIndex: 9999,
+          }}
+        >
+          <BookInfoBox
+            book={bookInfoBox}
+            user={user}
+            setWarningMsg={setWarningMsg}
+            isLoggedin={isLoggedin}
+            setIsLoggedin={setIsLoggedin}
+            setBooks={setBooks}
+            setUser={setUser}
+            starredBooks={starredBooks}
+            ratedBooks={ratedBooks}
+          />
+        </div>
+      )}
       {user ? (
         <>
           {theme === "sale" ? (

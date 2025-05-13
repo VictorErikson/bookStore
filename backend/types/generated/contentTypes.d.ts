@@ -381,6 +381,7 @@ export interface ApiBookBook extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    age: Schema.Attribute.Enumeration<['child', 'youth', 'adult']>;
     author: Schema.Attribute.String;
     cover: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     createdAt: Schema.Attribute.DateTime;

@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { BASE_URL } from "../../config/api";
+import { useBookInfo } from "../../contexts/bookInfoContext";
 import { useTheme } from "../../contexts/ThemeContext";
 import type { Book } from "../../types/book";
 import type { User } from "../../types/user";
@@ -25,6 +27,19 @@ const Card: React.FC<Props> = ({
   setUser,
 }) => {
   const { theme } = useTheme();
+  const { setBookInfoBox, setMousePos } = useBookInfo();
+  const [hoverTimer, setHoverTimer] = useState<NodeJS.Timeout | null>(null);
+
+  const handleMouseEnter = (e: React.MouseEvent) => {
+    setMousePos({ x: e.clientX, y: e.clientY });
+    const timer = setTimeout(() => setBookInfoBox(book), 2000);
+    setHoverTimer(timer);
+  };
+
+  const handleMouseLeave = () => {
+    if (hoverTimer) clearTimeout(hoverTimer);
+    setBookInfoBox(null);
+  };
 
   return (
     <div
@@ -33,6 +48,9 @@ const Card: React.FC<Props> = ({
       style={{
         backgroundImage: `url(${BASE_URL + book.cover?.url})`,
       }}
+      onMouseEnter={handleMouseEnter}
+      onMouseMove={(e) => setMousePos({ x: e.clientX, y: e.clientY })}
+      onMouseLeave={handleMouseLeave}
     >
       <div className="bottom h-[205px] bg-[#22222e] flex flex-col justify-between px-[20px] py-[15px] gap-[5px] rounded-br-xl rounded-bl-xl rounded-tr-[80px]">
         <div className="flex flex-col h-100 justify-between gap-[4px]">

@@ -5,7 +5,8 @@ import Header from "./components/Header/Header";
 import { useEffect, useState } from "react";
 import type { User } from "./types/user";
 import checkLoginStatus from "./services/checkLoginStatus";
-import { ThemeProvider } from "./contexts/THemeContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
+import { BookInfoProvider } from "./contexts/bookInfoContext";
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -21,29 +22,31 @@ function App() {
   }, []);
 
   return (
-    <ThemeProvider>
-      <Router>
-        <Header
-          user={user}
-          setUser={setUser}
-          isLoggedin={isLoggedin}
-          setIsLoggedin={setIsLoggedin}
-        />
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <Home
-                user={user}
-                setUser={setUser}
-                isLoggedin={isLoggedin}
-                setIsLoggedin={setIsLoggedin}
-              />
-            }
+    <BookInfoProvider>
+      <ThemeProvider>
+        <Router>
+          <Header
+            user={user}
+            setUser={setUser}
+            isLoggedin={isLoggedin}
+            setIsLoggedin={setIsLoggedin}
           />
-        </Routes>
-      </Router>
-    </ThemeProvider>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <Home
+                  user={user}
+                  setUser={setUser}
+                  isLoggedin={isLoggedin}
+                  setIsLoggedin={setIsLoggedin}
+                />
+              }
+            />
+          </Routes>
+        </Router>
+      </ThemeProvider>
+    </BookInfoProvider>
   );
 }
 
