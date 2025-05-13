@@ -1,4 +1,5 @@
 import { BASE_URL } from "../../config/api";
+import { useTheme } from "../../contexts/ThemeContext";
 import type { Book } from "../../types/book";
 import type { User } from "../../types/user";
 import LikeBtn from "./LikeBtn/LikeBtn";
@@ -23,6 +24,8 @@ const Card: React.FC<Props> = ({
   setBooks,
   setUser,
 }) => {
+  const { theme } = useTheme();
+
   return (
     <div
       id="card"
@@ -55,7 +58,18 @@ const Card: React.FC<Props> = ({
           </p>
         </div>
         <div className="buttonContainer flex justify-center items-center w-full gap-[10px]">
-          <p className="text-white text-m">${book.price}</p>
+          {theme === "sale" ? (
+            <div className="flex flex-col">
+              <p className="text-white text-l">
+                ${(book.price * 0.9).toFixed(2)}
+              </p>
+              <p className="text-red-600 line-through text-m opacity-70">
+                ${book.price}
+              </p>
+            </div>
+          ) : (
+            <p className="text-white text-m">${book.price}</p>
+          )}
           <div className="w-full bg-[#35353f] p-[2px] rounded-full box-border">
             <div className="bg-[#22222e] rounded-full w-full h-full hover:cursor-pointer">
               <button

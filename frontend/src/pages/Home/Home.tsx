@@ -9,6 +9,8 @@ import BookCarousel from "../../components/BookCarousel/BookCarousel";
 import TrendingInfoBox from "../../components/TrendingInfoBox/TrendingInfoBox";
 import LogedinHome from "./LogedinHome";
 import CardsSection from "../../components/Cards/CardsSection";
+import SaleInfoBox from "../../components/SaleInfoBox/SaleInfoBox";
+import { useTheme } from "../../contexts/ThemeContext";
 
 interface Props {
   user: User | null;
@@ -29,6 +31,7 @@ const Home: React.FC<Props> = ({
   const [ratedBooks, setRatedBooks] = useState<Book[]>([]);
   const [trendingBooks, setTrendingBooks] = useState<Book[]>([]);
   const trendingRef = useRef<HTMLDivElement>(null);
+  const { theme } = useTheme();
 
   const fetchBookById = async (documentId: string): Promise<Book> => {
     const response = await fetchData<{ data: Book }>(
@@ -83,11 +86,24 @@ const Home: React.FC<Props> = ({
       {warningMsg && <Warning msg={warningMsg} setWarningMsg={setWarningMsg} />}
       {user ? (
         <>
-          <TrendingInfoBox
+          {theme === "sale" ? (
+            <SaleInfoBox
+              onClickScroll={() =>
+                trendingRef.current?.scrollIntoView({ behavior: "smooth" })
+              }
+            />
+          ) : (
+            <TrendingInfoBox
+              onClickScroll={() =>
+                trendingRef.current?.scrollIntoView({ behavior: "smooth" })
+              }
+            />
+          )}
+          {/* <TrendingInfoBox
             onClickScroll={() =>
               trendingRef.current?.scrollIntoView({ behavior: "smooth" })
             }
-          />
+          /> */}
           <BookCarousel />
           <LogedinHome
             books={books}
@@ -101,27 +117,42 @@ const Home: React.FC<Props> = ({
             ratedBooks={ratedBooks}
           />
           {trendingBooks && (
-            <CardsSection
-              books={trendingBooks}
-              user={user}
-              setWarningMsg={setWarningMsg}
-              isLoggedin={isLoggedin}
-              setIsLoggedin={setIsLoggedin}
-              setBooks={setBooks}
-              setUser={setUser}
-              starredBooks={starredBooks}
-              ratedBooks={ratedBooks}
-              title={`Trending ⭐`}
-            />
+            <div ref={trendingRef}>
+              <CardsSection
+                books={trendingBooks}
+                user={user}
+                setWarningMsg={setWarningMsg}
+                isLoggedin={isLoggedin}
+                setIsLoggedin={setIsLoggedin}
+                setBooks={setBooks}
+                setUser={setUser}
+                starredBooks={starredBooks}
+                ratedBooks={ratedBooks}
+                title={`Trending ⭐`}
+              />
+            </div>
           )}
         </>
       ) : (
         <>
-          <TrendingInfoBox
+          {theme === "sale" ? (
+            <SaleInfoBox
+              onClickScroll={() =>
+                trendingRef.current?.scrollIntoView({ behavior: "smooth" })
+              }
+            />
+          ) : (
+            <TrendingInfoBox
+              onClickScroll={() =>
+                trendingRef.current?.scrollIntoView({ behavior: "smooth" })
+              }
+            />
+          )}
+          {/* <TrendingInfoBox
             onClickScroll={() =>
               trendingRef.current?.scrollIntoView({ behavior: "smooth" })
             }
-          />
+          /> */}
           <BookCarousel />
           <CardsSection
             books={books}
@@ -136,7 +167,7 @@ const Home: React.FC<Props> = ({
             title={`Books 📖`}
           />
           {trendingBooks && (
-            <>
+            <div ref={trendingRef}>
               <CardsSection
                 books={trendingBooks}
                 user={user}
@@ -149,7 +180,7 @@ const Home: React.FC<Props> = ({
                 ratedBooks={ratedBooks}
                 title={`Trending ⭐`}
               />
-            </>
+            </div>
           )}
         </>
       )}
