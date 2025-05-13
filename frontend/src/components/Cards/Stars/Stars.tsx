@@ -66,7 +66,8 @@ const StarRating: React.FC<StarRatingProps> = ({
       icon =
         i <= hoveredStar ? (
           <span
-            onClick={async () => {
+            onClick={async (e) => {
+              e.stopPropagation();
               if (isLoggedin) {
                 await rateBook(i, userRatingId, userHasRated, user, book);
                 const responseBook = await fetchData<{ data: Book }>(

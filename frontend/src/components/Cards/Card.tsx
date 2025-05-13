@@ -27,30 +27,32 @@ const Card: React.FC<Props> = ({
   setUser,
 }) => {
   const { theme } = useTheme();
-  const { setBookInfoBox, setMousePos } = useBookInfo();
-  const [hoverTimer, setHoverTimer] = useState<NodeJS.Timeout | null>(null);
+  const { setBookInfoBox } = useBookInfo();
+  // const { setBookInfoBox, setMousePos } = useBookInfo();
+  // const [hoverTimer, setHoverTimer] = useState<NodeJS.Timeout | null>(null);
 
-  const handleMouseEnter = (e: React.MouseEvent) => {
-    setMousePos({ x: e.clientX, y: e.clientY });
-    const timer = setTimeout(() => setBookInfoBox(book), 2000);
-    setHoverTimer(timer);
-  };
+  // const handleMouseEnter = (e: React.MouseEvent) => {
+  //   setMousePos({ x: e.clientX, y: e.clientY });
+  //   const timer = setTimeout(() => setBookInfoBox(book), 2000);
+  //   setHoverTimer(timer);
+  // };
 
-  const handleMouseLeave = () => {
-    if (hoverTimer) clearTimeout(hoverTimer);
-    setBookInfoBox(null);
-  };
+  // const handleMouseLeave = () => {
+  //   if (hoverTimer) clearTimeout(hoverTimer);
+  //   setBookInfoBox(null);
+  // };
 
   return (
-    <div
+    <a
       id="card"
       className="w-[270px] h-[456px] flex-shrink-0 bg-contain bg-no-repeat bg-top flex flex-col justify-end shadow-2xl rounded-t-3xl rounded-b-3xl duration-400 hover:scale-105 "
       style={{
         backgroundImage: `url(${BASE_URL + book.cover?.url})`,
       }}
-      onMouseEnter={handleMouseEnter}
-      onMouseMove={(e) => setMousePos({ x: e.clientX, y: e.clientY })}
-      onMouseLeave={handleMouseLeave}
+      onClick={() => setBookInfoBox(book)}
+      // onMouseEnter={handleMouseEnter}
+      // onMouseMove={(e) => setMousePos({ x: e.clientX, y: e.clientY })}
+      // onMouseLeave={handleMouseLeave}
     >
       <div className="bottom h-[205px] bg-[#22222e] flex flex-col justify-between px-[20px] py-[15px] gap-[5px] rounded-br-xl rounded-bl-xl rounded-tr-[80px]">
         <div className="flex flex-col h-100 justify-between gap-[4px]">
@@ -108,7 +110,7 @@ const Card: React.FC<Props> = ({
           />
         </div>
       </div>
-    </div>
+    </a>
   );
 };
 

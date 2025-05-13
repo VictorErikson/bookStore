@@ -18,7 +18,7 @@ const TrendingInfoBox: React.FC<Props> = ({ onClickScroll }) => {
           </p>
           <button
             className="py-[12px] px-[20px] 
-my-button rounded-lg mt-[40px] hover:cursor-pointer"
+my-button hoverColor rounded-lg mt-[40px] hover:cursor-pointer"
             onClick={onClickScroll}
           >
             Hot Right Now

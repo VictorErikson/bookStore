@@ -13,6 +13,7 @@ interface Props {
   setWarningMsg: (msg: string) => void;
   setBooks: React.Dispatch<React.SetStateAction<Book[]>>;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  classes?: string;
 }
 
 const LikeBtn: React.FC<Props> = ({
@@ -22,6 +23,7 @@ const LikeBtn: React.FC<Props> = ({
   setWarningMsg,
   setBooks,
   setUser,
+  classes,
 }) => {
   const [isLiked, setIsLiked] = useState(
     user?.starred.some((item) => item.documentId === book.documentId) ?? false
@@ -73,22 +75,27 @@ const LikeBtn: React.FC<Props> = ({
   };
 
   return (
-    <div className=" w-[53px] w-[53px] flex-shrink-0 bg-[#35353f] p-[2px] rounded-full box-border flex items-center justify-center hover:cursor-pointer ">
+    <div
+      className={`w-[53px] w-[53px] flex-shrink-0 bg-[#35353f] p-[2px] rounded-full box-border flex items-center justify-center hover:cursor-pointer ${classes}`}
+    >
       <div
-        className="bg-[#22222e] rounded-full w-full h-full flex items-center justify-center hover:cursor-pointer"
+        className={`bg-[#22222e] rounded-full w-full h-full flex items-center justify-center hover:cursor-pointer ${classes}`}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
         <button
           onMouseDown={(e) => e.stopPropagation()}
-          className="button bg-[#35353f] w-[calc(100%-4px)] py-[10px] rounded-full m-[2px] flex items-center justify-center hover:cursor-pointer hover:bg-[#5c5c6b]"
+          className={`button bg-[#35353f] w-[calc(100%-4px)] py-[10px] rounded-full m-[2px] flex items-center justify-center hover:cursor-pointer hover:bg-[#5c5c6b] ${classes}`}
           id="like"
           aria-label="Like"
-          onClick={() =>
-            isLoggedin
-              ? toggleLike(book)
-              : setWarningMsg("Please login to like products")
-          }
+          onClick={(e) => {
+            e.stopPropagation();
+            if (isLoggedin) {
+              toggleLike(book);
+            } else {
+              setWarningMsg("Please login to like products");
+            }
+          }}
         >
           {isLiked ? (
             <IconHeartFilled />
