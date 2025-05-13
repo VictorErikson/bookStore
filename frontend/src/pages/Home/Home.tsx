@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import Card from "../../components/Cards/Card";
 import fetchBooks from "../../services/fetchBooks";
 import type { Book } from "../../types/book";
 import type { User } from "../../types/user";
@@ -9,7 +8,7 @@ import fetchData from "../../services/fetchData";
 import BookCarousel from "../../components/BookCarousel/BookCarousel";
 import TrendingInfoBox from "../../components/TrendingInfoBox/TrendingInfoBox";
 import LogedinHome from "./LogedinHome";
-import ScrollableCards from "../../components/Cards/ScrollableCards";
+import CardsSection from "../../components/Cards/CardsSection";
 
 interface Props {
   user: User | null;
@@ -102,22 +101,18 @@ const Home: React.FC<Props> = ({
             ratedBooks={ratedBooks}
           />
           {trendingBooks && (
-            <>
-              <h3 className="text-3xl text-white pl-[25px]">Trending ⭐</h3>
-              <div ref={trendingRef}>
-                <ScrollableCards
-                  books={trendingBooks}
-                  user={user}
-                  setWarningMsg={setWarningMsg}
-                  isLoggedin={isLoggedin}
-                  setIsLoggedin={setIsLoggedin}
-                  setBooks={setBooks}
-                  setUser={setUser}
-                  starredBooks={starredBooks}
-                  ratedBooks={ratedBooks}
-                />
-              </div>
-            </>
+            <CardsSection
+              books={trendingBooks}
+              user={user}
+              setWarningMsg={setWarningMsg}
+              isLoggedin={isLoggedin}
+              setIsLoggedin={setIsLoggedin}
+              setBooks={setBooks}
+              setUser={setUser}
+              starredBooks={starredBooks}
+              ratedBooks={ratedBooks}
+              title={`Trending ⭐`}
+            />
           )}
         </>
       ) : (
@@ -128,9 +123,9 @@ const Home: React.FC<Props> = ({
             }
           />
           <BookCarousel />
-          <h3 className="text-3xl text-white pl-[25px]">Books 📖</h3>
-          <ScrollableCards
+          <CardsSection
             books={books}
+            user={user}
             setWarningMsg={setWarningMsg}
             isLoggedin={isLoggedin}
             setIsLoggedin={setIsLoggedin}
@@ -138,22 +133,22 @@ const Home: React.FC<Props> = ({
             setUser={setUser}
             starredBooks={starredBooks}
             ratedBooks={ratedBooks}
+            title={`Books 📖`}
           />
           {trendingBooks && (
             <>
-              <h3 className="text-3xl text-white pl-[25px]">Trending ⭐</h3>
-              <div ref={trendingRef}>
-                <ScrollableCards
-                  books={trendingBooks}
-                  setWarningMsg={setWarningMsg}
-                  isLoggedin={isLoggedin}
-                  setIsLoggedin={setIsLoggedin}
-                  setBooks={setBooks}
-                  setUser={setUser}
-                  starredBooks={starredBooks}
-                  ratedBooks={ratedBooks}
-                />
-              </div>
+              <CardsSection
+                books={trendingBooks}
+                user={user}
+                setWarningMsg={setWarningMsg}
+                isLoggedin={isLoggedin}
+                setIsLoggedin={setIsLoggedin}
+                setBooks={setBooks}
+                setUser={setUser}
+                starredBooks={starredBooks}
+                ratedBooks={ratedBooks}
+                title={`Trending ⭐`}
+              />
             </>
           )}
         </>

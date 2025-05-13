@@ -13,5 +13,5 @@ export type SortOption =
     | "Author: Z-a"
     | "Price: Low to High"
     | "Price: High to Low"
-    | "My Rating: Low to High"
     | "My Rating: High to Low"
+    | "My Rating: Low to High"

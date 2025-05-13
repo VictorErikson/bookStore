@@ -59,26 +59,36 @@ const ScrollableCards: React.FC<Props> = ({
         return copy.sort((a, b) =>
           b.title.localeCompare(a.title, undefined, { sensitivity: "base" })
         );
-      case "My Rating: Low to High":
-        return copy.sort((a, b) => {
-          const ratingA =
-            a.ratings.find((r) => r.documentId === user?.documentId)?.rating ??
-            0;
-          const ratingB =
-            b.ratings.find((r) => r.documentId === user?.documentId)?.rating ??
-            0;
+      case "My Rating: High to Low": {
+        const ratingMap = new Map<string, number>(
+          user.ratings.map(
+            (r) => [r.book!.documentId, r.rating] as [string, number]
+          )
+        );
+
+        copy.sort((a, b) => {
+          const ratingA = ratingMap.get(a.documentId) ?? 0;
+          const ratingB = ratingMap.get(b.documentId) ?? 0;
+          return ratingB - ratingA;
+        });
+
+        return copy;
+      }
+      case "My Rating: Low to High": {
+        const ratingMap = new Map<string, number>(
+          user.ratings.map(
+            (r) => [r.book!.documentId, r.rating] as [string, number]
+          )
+        );
+
+        copy.sort((a, b) => {
+          const ratingA = ratingMap.get(a.documentId) ?? 0;
+          const ratingB = ratingMap.get(b.documentId) ?? 0;
           return ratingA - ratingB;
         });
-      case "My Rating: High to Low":
-        return copy.sort((a, b) => {
-          const ratingA =
-            b.ratings.find((r) => r.documentId === user?.documentId)?.rating ??
-            0;
-          const ratingB =
-            a.ratings.find((r) => r.documentId === user?.documentId)?.rating ??
-            0;
-          return ratingA - ratingB;
-        });
+        return copy;
+      }
+
       default:
         return copy;
     }

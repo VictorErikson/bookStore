@@ -31,62 +31,39 @@ const LogedinHome: React.FC<Props> = ({
     <div className="flex gap-[20px] w-screen overflow-hidden box-border h-full flex flex-col ">
       {/* {user.starred.length > 0 && ( */}
       {starredBooks.length > 0 && (
-        <>
-          <h3 className="text-3xl text-white pl-[25px]">
-            {user?.username}s Favourites ❤️
-          </h3>
-          <ScrollableCards
-            books={starredBooks.filter(
-              (b, i, a) =>
-                a.findIndex((x) => x.documentId === b.documentId) === i
-            )}
-            user={user}
-            setWarningMsg={setWarningMsg}
-            isLoggedin={isLoggedin}
-            setIsLoggedin={setIsLoggedin}
-            setBooks={setBooks}
-            setUser={setUser}
-            starredBooks={starredBooks}
-            ratedBooks={ratedBooks}
-          />
-        </>
+        <CardsSection
+          books={starredBooks.filter(
+            (b, i, a) => a.findIndex((x) => x.documentId === b.documentId) === i
+          )}
+          user={user}
+          setWarningMsg={setWarningMsg}
+          isLoggedin={isLoggedin}
+          setIsLoggedin={setIsLoggedin}
+          setBooks={setBooks}
+          setUser={setUser}
+          starredBooks={starredBooks}
+          ratedBooks={ratedBooks}
+          title={`${user?.username}s Favourites ❤️`}
+        />
       )}
       {ratedBooks.length > 0 && (
-        <>
-          <h3 className="text-3xl text-white pl-[25px]">
-            {user?.username}s Ratings ⭐
-          </h3>
-          <ScrollableCards
-            books={ratedBooks.filter(
-              (b, i, a) =>
-                a.findIndex((x) => x.documentId === b.documentId) === i
-            )}
-            user={user}
-            setWarningMsg={setWarningMsg}
-            isLoggedin={isLoggedin}
-            setIsLoggedin={setIsLoggedin}
-            setBooks={setBooks}
-            setUser={setUser}
-            starredBooks={starredBooks}
-            ratedBooks={ratedBooks}
-          />
-        </>
+        <CardsSection
+          books={ratedBooks.filter(
+            (b, i, a) => a.findIndex((x) => x.documentId === b.documentId) === i
+          )}
+          user={user}
+          setWarningMsg={setWarningMsg}
+          isLoggedin={isLoggedin}
+          setIsLoggedin={setIsLoggedin}
+          setBooks={setBooks}
+          setUser={setUser}
+          starredBooks={starredBooks}
+          ratedBooks={ratedBooks}
+          title={`${user?.username}s Ratings ⭐`}
+          sortRatings={true}
+        />
       )}
-      {/* <div className="flex w-full items-spacebetween">
-        <h3 className="text-3xl text-white pl-[25px]">Books 📖</h3>
-        <button></button>
-      </div>
-      <ScrollableCards
-        books={books}
-        user={user}
-        setWarningMsg={setWarningMsg}
-        isLoggedin={isLoggedin}
-        setIsLoggedin={setIsLoggedin}
-        setBooks={setBooks}
-        setUser={setUser}
-        starredBooks={starredBooks}
-        ratedBooks={ratedBooks}
-      /> */}
+
       <CardsSection
         books={books}
         user={user}

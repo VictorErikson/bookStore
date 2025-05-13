@@ -15,8 +15,8 @@ interface Props {
   setUser?: React.Dispatch<React.SetStateAction<User | null>>;
   starredBooks: Book[];
   ratedBooks: Book[];
-  sortBy: SortOption;
   title: string;
+  sortRatings?: boolean;
 }
 
 const CardsSection: React.FC<Props> = ({
@@ -30,6 +30,7 @@ const CardsSection: React.FC<Props> = ({
   starredBooks,
   ratedBooks,
   title,
+  sortRatings,
 }) => {
   const [sortBy, setSortBy] = useState<
     | "Title: A-z"
@@ -38,15 +39,19 @@ const CardsSection: React.FC<Props> = ({
     | "Author: Z-a"
     | "Price: Low to High"
     | "Price: High to Low"
-    | "My Rating: Low to High"
     | "My Rating: High to Low"
+    | "My Rating: Low to High"
   >("Title: A-z");
 
   return (
     <>
-      <div className="flex w-full items-spacebetween">
+      <div className="flex w-full items-end justify-between">
         <h3 className="text-3xl text-white pl-[25px]">{title}</h3>
-        <SortingButton sortBy={sortBy} setSortBy={setSortBy} />
+        <SortingButton
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          sortRatings={sortRatings}
+        />
       </div>
       <ScrollableCards
         books={books}

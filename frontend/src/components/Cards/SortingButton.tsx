@@ -3,7 +3,7 @@ import type { SortOption, SortOptionWithRatings } from "../../types/sorting";
 interface Props {
   sortBy: SortOption;
   setSortBy: React.Dispatch<React.SetStateAction<SortOption>>;
-  sortRatings: boolean;
+  sortRatings?: boolean;
 }
 
 const SortingButton: React.FC<Props> = ({
@@ -21,8 +21,8 @@ const SortingButton: React.FC<Props> = ({
       "Author: Z-a",
       "Price: Low to High",
       "Price: High to Low",
-      "My Rating: Low to High",
       "My Rating: High to Low",
+      "My Rating: Low to High",
     ];
   } else {
     sortOptions = [
@@ -41,7 +41,14 @@ const SortingButton: React.FC<Props> = ({
     setSortBy(sortOptions[nextIndex]);
   };
 
-  return <button onClick={handleClick}>{sortBy}</button>;
+  return (
+    <button
+      className="text-xl text-white pr-[40px] hover:cursor-pointer opacity-65 hover:opacity-100"
+      onClick={handleClick}
+    >
+      {sortBy}
+    </button>
+  );
 };
 
 export default SortingButton;
