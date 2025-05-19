@@ -1,27 +1,81 @@
-const ChildrenPart = () => {
+import type { RefObject } from "react";
+import type { Book } from "../../types/book";
+import type { User } from "../../types/user";
+import CardsSection from "../Cards/CardsSection";
+import ReviewsPart from "../ReviewsPart/ReviewsPart";
+
+interface Props {
+  books: Book[] | null;
+  user?: User;
+  setWarningMsg: (msg: string) => void;
+  isLoggedin: boolean;
+  setIsLoggedin: React.Dispatch<React.SetStateAction<boolean>>;
+  setBooks: React.Dispatch<React.SetStateAction<Book[]>>;
+  setUser?: React.Dispatch<React.SetStateAction<User | null>>;
+  starredBooks: Book[];
+  ratedBooks: Book[];
+  sortRatings?: boolean;
+  onClickScroll?: () => void;
+  childrensBooksRef: RefObject<HTMLElement>;
+  reviewsRef: RefObject<HTMLElement>;
+}
+
+const ChildrenPart: React.FC<Props> = ({
+  books,
+  user,
+  setWarningMsg,
+  isLoggedin,
+  setIsLoggedin,
+  setBooks,
+  setUser,
+  starredBooks,
+  ratedBooks,
+  onClickScroll,
+  childrensBooksRef,
+  reviewsRef,
+}) => {
   return (
-    <div className="flex flex-col w-screen">
-      <div className="top flex text-white px-[92px] w-screen bg-#100020">
-        <img src="" alt="" />
-        <div className="info">
-          <h2 className="text-xl font-sans font-bold pr-[150px]">
-            What's trending!
-          </h2>
-          <p>
-            Curious about what others are reading and what's popular right now?
-            Great, this page is an excellent way to discover new books you might
-            not have come across otherwise and to find inspiration for your next
-            reading experience.
-          </p>
-          <button
-            className="py-[12px] px-[20px] 
-my-button rounded-lg mt-[40px] hover:cursor-pointer"
-            // onClick={onClickScroll}
-          >
-            Children Category
-          </button>
+    <div>
+      <div className="flex flex-col w-screen bg-[#100020] pb-[15px]">
+        <div className="top flex  justify-between self-center text-white px-[92px] w-screen max-w-[1300px] pb-[85px] pt-[60px] max-w[620px] items-center">
+          <img
+            className="w-[550px]"
+            src="../../public/assets/child.jpg"
+            alt=""
+          />
+          <div className="info max-w-[500px]">
+            <h2 className="text-3xl font-sans font-bold pr-[150px] mb-[12px]">
+              Share the joy of reading
+            </h2>
+            <p className="mb-[24px]">
+              Encourage a reading habit with exciting stories for all ages.
+              Discover our delightful selection of books specially chosen to
+              spark curiosity and imagination in children.
+            </p>
+            <button
+              className="py-[12px] px-[20px] my-button hoverColor rounded-lg mt-[40px] hover:cursor-pointer"
+              onClick={onClickScroll}
+            >
+              Childrens Section
+            </button>
+          </div>
+        </div>
+        <div ref={childrensBooksRef}>
+          <CardsSection
+            books={books}
+            user={user}
+            setWarningMsg={setWarningMsg}
+            isLoggedin={isLoggedin}
+            setIsLoggedin={setIsLoggedin}
+            setBooks={setBooks}
+            setUser={setUser}
+            starredBooks={starredBooks}
+            ratedBooks={ratedBooks}
+            title={`Popular children's books 🦄`}
+          />
         </div>
       </div>
+      <ReviewsPart reviewsRef={reviewsRef} />
     </div>
   );
 };

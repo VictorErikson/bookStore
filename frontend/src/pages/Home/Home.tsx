@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import fetchBooks from "../../services/fetchBooks";
 import type { Book } from "../../types/book";
 import type { User } from "../../types/user";
@@ -13,12 +13,21 @@ import SaleInfoBox from "../../components/SaleInfoBox/SaleInfoBox";
 import { useTheme } from "../../contexts/ThemeContext";
 import BookInfoBox from "../../components/BookInfoBox/BookInfoBox";
 import { useBookInfo } from "../../contexts/bookInfoContext";
+import ChildrenPart from "../../components/Children/ChildrenPart";
+import InspoPart from "../../components/InspoPart/InspoPart";
+// import RightSideMenu from "../../components/Header/RightSideMenu";
 
 interface Props {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
   isLoggedin: boolean;
   setIsLoggedin: React.Dispatch<React.SetStateAction<boolean>>;
+  allBooksRef: RefObject<HTMLElement> | null;
+  favouritesRef: RefObject<HTMLElement>;
+  ratedRef: RefObject<HTMLElement>;
+  reviewsRef: RefObject<HTMLElement>;
+  // setMenuIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  // menuIsOpen: boolean;
 }
 
 const Home: React.FC<Props> = ({
@@ -26,6 +35,12 @@ const Home: React.FC<Props> = ({
   setUser,
   isLoggedin,
   setIsLoggedin,
+  allBooksRef,
+  favouritesRef,
+  ratedRef,
+  reviewsRef,
+  // setMenuIsOpen,
+  // menuIsOpen,
 }) => {
   const [books, setBooks] = useState<Book[]>([]);
   const [warningMsg, setWarningMsg] = useState<string | null>(null);
@@ -33,8 +48,9 @@ const Home: React.FC<Props> = ({
   const [ratedBooks, setRatedBooks] = useState<Book[]>([]);
   const [trendingBooks, setTrendingBooks] = useState<Book[]>([]);
   const trendingRef = useRef<HTMLDivElement>(null);
+  const childrensBooksRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
-  const { bookInfoBox, mousePos } = useBookInfo();
+  const { bookInfoId, mousePos } = useBookInfo();
 
   const fetchBookById = async (documentId: string): Promise<Book> => {
     const response = await fetchData<{ data: Book }>(
@@ -56,10 +72,6 @@ const Home: React.FC<Props> = ({
     } else {
       root.classList.remove("bg-dark");
     }
-  }, [theme]);
-
-  useEffect(() => {
-    console.log(theme);
   }, [theme]);
 
   useEffect(() => {
@@ -104,19 +116,20 @@ const Home: React.FC<Props> = ({
   }, [books]);
 
   return (
+    // <div className="relative">
     <main className=" box-border">
       {warningMsg && <Warning msg={warningMsg} setWarningMsg={setWarningMsg} />}
-      {bookInfoBox && (
+      {bookInfoId && (
         <div
           style={{
             position: "fixed",
             top: mousePos.y + 10,
             left: mousePos.x + 10,
-            zIndex: 9999,
+            zIndex: 1,
           }}
         >
           <BookInfoBox
-            book={bookInfoBox}
+            book={books.find((b) => b.documentId === bookInfoId)!}
             user={user}
             setWarningMsg={setWarningMsg}
             isLoggedin={isLoggedin}
@@ -159,6 +172,16 @@ const Home: React.FC<Props> = ({
             setUser={setUser}
             starredBooks={starredBooks}
             ratedBooks={ratedBooks}
+            onClickScroll={() =>
+              childrensBooksRef.current?.scrollIntoView({
+                behavior: "smooth",
+              })
+            }
+            childrensBooksRef={childrensBooksRef}
+            allBooksRef={allBooksRef}
+            favouritesRef={favouritesRef}
+            ratedRef={ratedRef}
+            reviewsRef={reviewsRef}
           />
           {trendingBooks && (
             <div ref={trendingRef}>
@@ -192,12 +215,25 @@ const Home: React.FC<Props> = ({
               }
             />
           )}
-          {/* <TrendingInfoBox
-            onClickScroll={() =>
-              trendingRef.current?.scrollIntoView({ behavior: "smooth" })
-            }
-          /> */}
           <BookCarousel />
+          <InspoPart />
+          <ChildrenPart
+            onClickScroll={() =>
+              childrensBooksRef.current?.scrollIntoView({
+                behavior: "smooth",
+              })
+            }
+            childrensBooksRef={childrensBooksRef}
+            books={books.filter((book) => book.age === "child")}
+            user={user}
+            setWarningMsg={setWarningMsg}
+            isLoggedin={isLoggedin}
+            setIsLoggedin={setIsLoggedin}
+            setBooks={setBooks}
+            setUser={setUser}
+            starredBooks={starredBooks}
+            ratedBooks={ratedBooks}
+          />
           <CardsSection
             books={books}
             user={user}
@@ -229,6 +265,8 @@ const Home: React.FC<Props> = ({
         </>
       )}
     </main>
+    //   <RightSideMenu menuIsOpen={menuIsOpen} setMenuIsOpen={setMenuIsOpen} />
+    // </div>
   );
 };
 

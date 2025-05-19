@@ -1,8 +1,9 @@
-import Card from "../../components/Cards/Card";
+import type { RefObject } from "react";
 import CardsSection from "../../components/Cards/CardsSection";
-import ScrollableCards from "../../components/Cards/ScrollableCards";
+import ChildrenPart from "../../components/Children/ChildrenPart";
 import type { Book } from "../../types/book";
 import type { User } from "../../types/user";
+import InspoPart from "../../components/InspoPart/InspoPart";
 
 interface Props {
   books: Book[];
@@ -14,6 +15,11 @@ interface Props {
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
   starredBooks: Book[];
   ratedBooks: Book[];
+  childrensBooksRef: RefObject<HTMLElement>;
+  allBooksRef: RefObject<HTMLElement>;
+  favouritesRef: RefObject<HTMLElement>;
+  ratedRef: RefObject<HTMLElement>;
+  reviewsRef: RefObject<HTMLElement>;
 }
 
 const LogedinHome: React.FC<Props> = ({
@@ -26,46 +32,61 @@ const LogedinHome: React.FC<Props> = ({
   setUser,
   starredBooks,
   ratedBooks,
+  childrensBooksRef,
+  allBooksRef,
+  favouritesRef,
+  ratedRef,
+  reviewsRef,
 }) => {
   return (
     <div className="flex gap-[20px] w-screen overflow-hidden box-border h-full flex flex-col ">
       {/* {user.starred.length > 0 && ( */}
       {starredBooks.length > 0 && (
-        <CardsSection
-          books={starredBooks.filter(
-            (b, i, a) => a.findIndex((x) => x.documentId === b.documentId) === i
-          )}
-          user={user}
-          setWarningMsg={setWarningMsg}
-          isLoggedin={isLoggedin}
-          setIsLoggedin={setIsLoggedin}
-          setBooks={setBooks}
-          setUser={setUser}
-          starredBooks={starredBooks}
-          ratedBooks={ratedBooks}
-          title={`${user?.username}s Favourites ❤️`}
-        />
+        <div ref={favouritesRef}>
+          <CardsSection
+            books={starredBooks.filter(
+              (b, i, a) =>
+                a.findIndex((x) => x.documentId === b.documentId) === i
+            )}
+            user={user}
+            setWarningMsg={setWarningMsg}
+            isLoggedin={isLoggedin}
+            setIsLoggedin={setIsLoggedin}
+            setBooks={setBooks}
+            setUser={setUser}
+            starredBooks={starredBooks}
+            ratedBooks={ratedBooks}
+            title={`${user?.username}s Favourites ❤️`}
+          />
+        </div>
       )}
       {ratedBooks.length > 0 && (
-        <CardsSection
-          books={ratedBooks.filter(
-            (b, i, a) => a.findIndex((x) => x.documentId === b.documentId) === i
-          )}
-          user={user}
-          setWarningMsg={setWarningMsg}
-          isLoggedin={isLoggedin}
-          setIsLoggedin={setIsLoggedin}
-          setBooks={setBooks}
-          setUser={setUser}
-          starredBooks={starredBooks}
-          ratedBooks={ratedBooks}
-          title={`${user?.username}s Ratings ⭐`}
-          sortRatings={true}
-        />
+        <div ref={ratedRef}>
+          <CardsSection
+            books={ratedBooks.filter(
+              (b, i, a) =>
+                a.findIndex((x) => x.documentId === b.documentId) === i
+            )}
+            user={user}
+            setWarningMsg={setWarningMsg}
+            isLoggedin={isLoggedin}
+            setIsLoggedin={setIsLoggedin}
+            setBooks={setBooks}
+            setUser={setUser}
+            starredBooks={starredBooks}
+            ratedBooks={ratedBooks}
+            title={`${user?.username}s Ratings ⭐`}
+            sortRatings={true}
+          />
+        </div>
       )}
-
-      <CardsSection
-        books={books}
+      <InspoPart />
+      <ChildrenPart
+        onClickScroll={() =>
+          childrensBooksRef.current?.scrollIntoView({ behavior: "smooth" })
+        }
+        childrensBooksRef={childrensBooksRef}
+        books={books.filter((book) => book.age === "child")}
         user={user}
         setWarningMsg={setWarningMsg}
         isLoggedin={isLoggedin}
@@ -74,8 +95,22 @@ const LogedinHome: React.FC<Props> = ({
         setUser={setUser}
         starredBooks={starredBooks}
         ratedBooks={ratedBooks}
-        title={"Books 📖"}
+        reviewsRef={reviewsRef}
       />
+      <div ref={allBooksRef}>
+        <CardsSection
+          books={books}
+          user={user}
+          setWarningMsg={setWarningMsg}
+          isLoggedin={isLoggedin}
+          setIsLoggedin={setIsLoggedin}
+          setBooks={setBooks}
+          setUser={setUser}
+          starredBooks={starredBooks}
+          ratedBooks={ratedBooks}
+          title={"Books 📖"}
+        />
+      </div>
     </div>
   );
 };

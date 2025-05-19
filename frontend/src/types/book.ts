@@ -61,6 +61,7 @@ export interface Book {
   publishedAt: string | null;
   description: string;
   price: number;
+  age: string;
   cover?: Cover;
   ratings?: Rating[];
   liked?: LikedUser[];

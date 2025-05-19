@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { colors } from "../../config/colors";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type RefObject } from "react";
 import type { User } from "../../types/user";
 import HeadMenuUnAuth from "./HeadMenuUnAuth";
 import HeadMenuAuth from "./HeadMenuAuth";
@@ -11,6 +11,12 @@ interface Props {
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
   isLoggedin: boolean;
   setIsLoggedin: React.Dispatch<React.SetStateAction<boolean>>;
+  // setMenuIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  // menuIsOpen: boolean;
+  allBooksRef: RefObject<HTMLElement> | null;
+  favouritesRef: RefObject<HTMLElement>;
+  ratedRef: RefObject<HTMLElement>;
+  reviewsRef: RefObject<HTMLElement>;
 }
 
 const Header: React.FC<Props> = ({
@@ -18,6 +24,13 @@ const Header: React.FC<Props> = ({
   setUser,
   isLoggedin,
   setIsLoggedin,
+  allBooksRef,
+  favouritesRef,
+  ratedRef,
+  reviewsRef,
+
+  // setMenuIsOpen,
+  // menuIsOpen,
 }) => {
   const [loginMsg, setLoginMsg] = useState<string | null>(null);
   const [menuStatus, setMenuStatus] = useState("start");
@@ -53,6 +66,12 @@ const Header: React.FC<Props> = ({
             setUser={setUser}
             isLoggedin={isLoggedin}
             setIsLoggedin={setIsLoggedin}
+            allBooksRef={allBooksRef}
+            favouritesRef={favouritesRef}
+            ratedRef={ratedRef}
+            reviewsRef={reviewsRef}
+            // setMenuIsOpen={setMenuIsOpen}
+            // menuIsOpen={menuIsOpen}
           />
         ) : (
           <HeadMenuUnAuth

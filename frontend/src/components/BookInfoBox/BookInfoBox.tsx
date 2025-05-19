@@ -27,13 +27,13 @@ const BookInfoBox: React.FC<Props> = ({
   setUser,
 }) => {
   const boxRef = useRef<HTMLDivElement>(null);
-  const { setBookInfoBox } = useBookInfo();
+  const { setBookInfoId } = useBookInfo();
   const { theme } = useTheme();
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (boxRef.current && !boxRef.current.contains(e.target as Node)) {
-        setBookInfoBox(null);
+        setBookInfoId(null);
       }
     };
 
@@ -45,7 +45,10 @@ const BookInfoBox: React.FC<Props> = ({
   return (
     <div className="fixed inset-0 flex items-center justify-center z-0.5 bg-black/50">
       {/* <div className="bg-[#eeebe8] p-6 rounded-lg shadow-lg text-center min-w-[300px] max-w-[1000px] flex mx-[40px]"> */}
-      <div className="bg-[#f5f0f9] p-6 rounded-lg shadow-lg text-center min-w-[300px] max-w-[1000px] flex mx-[40px]">
+      <div
+        ref={boxRef}
+        className="bg-[#f5f0f9] p-6 rounded-lg shadow-lg text-center min-w-[300px] max-w-[1000px] flex mx-[40px] z-1"
+      >
         <div className="left">
           <img
             src={BASE_URL + book.cover?.url}
@@ -73,7 +76,9 @@ const BookInfoBox: React.FC<Props> = ({
                   setBooks={setBooks}
                   setUser={setUser}
                 />
-                <p className="text-sm">Pages: {book.pages}</p>
+                <p className="text-sm">
+                  Pages: {book.pages}, Release date: {book.releasedate}
+                </p>
               </div>
             </div>
 
@@ -84,10 +89,10 @@ const BookInfoBox: React.FC<Props> = ({
           <div className="buttonContainer pr-[40px] flex justify-center items-center w-full gap-[10px]">
             {theme === "sale" ? (
               <div className="flex flex-col">
-                <p className="text-white text-xl">
+                <p className="text-xl pr-[40px]">
                   ${(book.price * 0.9).toFixed(2)}
                 </p>
-                <p className="text-red-600 line-through text-l opacity-70">
+                <p className="text-red-600 line-through text-l opacity-70 pr-[40px]">
                   ${book.price}
                 </p>
               </div>

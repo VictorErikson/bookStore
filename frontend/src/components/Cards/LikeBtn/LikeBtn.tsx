@@ -60,11 +60,6 @@ const LikeBtn: React.FC<Props> = ({
       updatedLikes.map((u) => u.documentId)
     );
 
-    // const updatedBook = await toggleLike(bookId); // call your backend here
-
-    // setBooks((prev) =>
-    //   prev.map((b) => (b.documentId === book.documentId.data ? updatedBook : b))
-    // );
     setBooks((prev) =>
       prev.map((b) =>
         b.documentId === book.documentId ? { ...b, liked: updatedLikes } : b
@@ -104,7 +99,6 @@ const LikeBtn: React.FC<Props> = ({
           ) : (
             <IconHeart />
           )}
-          {/* {isStarred ? <IconHeartFilled /> : <IconHeart />} */}
         </button>
       </div>
     </div>
