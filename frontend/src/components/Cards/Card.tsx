@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { BASE_URL } from "../../config/api";
 import { useBookInfo } from "../../contexts/bookInfoContext";
+import { useCart } from "../../contexts/cartContext";
 import { useTheme } from "../../contexts/ThemeContext";
 import type { Book } from "../../types/book";
 import type { User } from "../../types/user";
@@ -27,6 +29,8 @@ const Card: React.FC<Props> = ({
 }) => {
   const { theme } = useTheme();
   const { setBookInfoId } = useBookInfo();
+  const { addToCart } = useCart();
+  const [added, setAdded] = useState(false);
 
   return (
     <a
@@ -78,8 +82,15 @@ const Card: React.FC<Props> = ({
               <button
                 className="text-white bg-[#35353f] w-[calc(100%-4px)] py-[10px] rounded-full m-[2px] text-sm hover:cursor-pointer hover:bg-[#5c5c6b]"
                 id="addToCart"
+                onMouseDown={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  addToCart(book);
+                  setAdded(true);
+                  window.setTimeout(() => setAdded(false), 1200);
+                }}
               >
-                Add to cart
+                {added ? "Added ✓" : "Add to cart"}
               </button>
             </div>
           </div>

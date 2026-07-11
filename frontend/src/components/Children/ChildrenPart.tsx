@@ -36,15 +36,15 @@ const ChildrenPart: React.FC<Props> = ({
 }) => {
   return (
     <div>
-      <div className="flex flex-col w-screen bg-[#100020] pb-[15px]">
-        <div className="top flex  justify-between self-center text-white px-[92px] w-screen max-w-[1300px] pb-[85px] pt-[60px] max-w[620px] items-center">
+      <div className="flex flex-col w-full bg-[#100020] pb-[15px]">
+        <div className="top flex flex-col lg:flex-row gap-8 lg:gap-0 justify-between self-center text-white px-6 md:px-10 lg:px-[92px] w-full max-w-[1300px] pb-[50px] lg:pb-[85px] pt-[40px] lg:pt-[60px] items-center">
           <img
-            className="w-[550px]"
-            src="../../public/assets/child.jpg"
+            className="w-full max-w-[420px] lg:w-[550px]"
+            src={`${import.meta.env.BASE_URL}assets/child.jpg`}
             alt=""
           />
           <div className="info max-w-[500px]">
-            <h2 className="text-3xl font-sans font-bold pr-[150px] mb-[12px]">
+            <h2 className="text-3xl font-sans font-bold pr-0 lg:pr-[150px] mb-[12px]">
               Share the joy of reading
             </h2>
             <p className="mb-[24px]">

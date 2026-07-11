@@ -5,6 +5,7 @@ import IconHeartFilled from "../../logos/IconHeartFilled";
 import updateBook from "../../../services/updateBook";
 import type { Book, LikedUser } from "../../../types/book";
 import checkLoginStatus from "../../../services/checkLoginStatus";
+import { useAnonData } from "../../../contexts/anonDataContext";
 
 interface Props {
   user: User | undefined;
@@ -20,19 +21,19 @@ const LikeBtn: React.FC<Props> = ({
   user,
   book,
   isLoggedin,
-  setWarningMsg,
   setBooks,
   setUser,
   classes,
 }) => {
-  const [isLiked, setIsLiked] = useState(
-    user?.starred.some((item) => item.documentId === book.documentId) ?? false
-  );
+  const { anonLikes, toggleAnonLike } = useAnonData();
+  const likedNow = isLoggedin
+    ? user?.starred.some((item) => item.documentId === book.documentId) ??
+      false
+    : anonLikes.includes(book.documentId);
+  const [isLiked, setIsLiked] = useState(likedNow);
   useEffect(() => {
-    setIsLiked(
-      user?.starred.some((item) => item.documentId === book.documentId) ?? false
-    );
-  }, [user?.starred, book.documentId]);
+    setIsLiked(likedNow);
+  }, [likedNow]);
   const [isHovered, setIsHovered] = useState(false);
 
   const toggleLike = async (book: Book) => {
@@ -88,7 +89,7 @@ const LikeBtn: React.FC<Props> = ({
             if (isLoggedin) {
               toggleLike(book);
             } else {
-              setWarningMsg("Please login to like products");
+              toggleAnonLike(book.documentId);
             }
           }}
         >

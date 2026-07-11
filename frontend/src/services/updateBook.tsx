@@ -8,14 +8,14 @@ const updateBook = async <T,>(bookId: string, likedArray: string[]) => {
     },
   };
 
+  const token = sessionStorage.getItem("token");
+
   try {
     const response = await axios.put<T>(
       `${BASE_URL}/api/books/${bookId}`,
       updateData,
       {
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-        },
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
       }
     );
     return response.data;

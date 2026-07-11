@@ -2,6 +2,9 @@ import axios from "axios";
 import IconLogin from "../logos/IconLogin";
 import { useRef } from "react";
 import checkLoginStatus from "../../services/checkLoginStatus";
+import mergeAnonData from "../../services/mergeAnonData";
+import { useAnonData } from "../../contexts/anonDataContext";
+import type { User } from "../../types/user";
 
 interface MenuProps {
   setLoginMsg: (msg: string | null) => void;
@@ -11,15 +14,15 @@ interface MenuProps {
   setMenuStatus: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const LoginMenu = ({
+const LoginMenu: React.FC<MenuProps> = ({
   setLoginMsg,
   setUser,
-  isLoggedin,
   setIsLoggedin,
   setMenuStatus,
 }) => {
   const usernameRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const { anonLikes, anonRatings, clearAnonData } = useAnonData();
 
   const login = async () => {
     const identifier = usernameRef.current?.value;
@@ -38,35 +41,43 @@ const LoginMenu = ({
       );
 
       sessionStorage.setItem("token", response.data.jwt);
-      const fetchedUser = await checkLoginStatus();
+      let fetchedUser = await checkLoginStatus();
+      if (
+        fetchedUser &&
+        (anonLikes.length > 0 || Object.keys(anonRatings).length > 0)
+      ) {
+        await mergeAnonData(fetchedUser, anonLikes, anonRatings);
+        clearAnonData();
+        fetchedUser = await checkLoginStatus();
+      }
       setUser(fetchedUser);
 
       setIsLoggedin(!!fetchedUser);
       setLoginMsg("Login was successful!");
     } catch (error: any) {
       if (axios.isAxiosError(error)) {
-        setLoginMsg("Login Failed");
+        setLoginMsg(error.response?.data?.error?.message ?? "Login Failed");
       } else {
         setLoginMsg("Something went wrong");
       }
     }
   };
   return (
-    <div className="headMenu flex gap-[15px] items-center">
+    <div className="headMenu flex flex-col w-full gap-[15px]">
       <input
         ref={usernameRef}
         type="text"
         name="username"
         placeholder="Username"
-        className="border border-white p-[5px] px-[10px] text-white opacity-50 active:rounded-none focus:opacity-100 focus:outline-none hover:opacity-100"
+        className="w-full border border-white p-[5px] px-[10px] text-white opacity-50 active:rounded-none focus:opacity-100 focus:outline-none hover:opacity-100"
       />
-      <div className="flex flex-col pt-[24px]">
+      <div className="flex flex-col w-full">
         <input
           ref={passwordRef}
           type="password"
           name="password"
           placeholder="Password"
-          className="border border-white p-[5px] px-[10px] text-white opacity-50 active:rounded-none focus:opacity-100 focus:outline-none hover:opacity-100"
+          className="w-full border border-white p-[5px] px-[10px] text-white opacity-50 active:rounded-none focus:opacity-100 focus:outline-none hover:opacity-100"
         />
         <button
           onClick={() => setMenuStatus("createUser")}
@@ -77,7 +88,7 @@ const LoginMenu = ({
       </div>
       <button
         onClick={() => login()}
-        className="text-white flex gap-[10px] opacity-65 hover:opacity-100 hover:cursor-pointer"
+        className="text-white w-full border border-white rounded-lg py-[10px] flex gap-[10px] items-center justify-center opacity-80 hover:opacity-100 hover:bg-white/10 hover:cursor-pointer"
       >
         Login <IconLogin />
       </button>

@@ -45,8 +45,10 @@ const CardsSection: React.FC<Props> = ({
 
   return (
     <>
-      <div className="flex w-full items-end justify-between">
-        <h3 className="text-3xl text-white pl-[25px]">{title}</h3>
+      <div className="flex w-full items-end justify-between pr-[16px] lg:pr-0">
+        <h3 className="text-2xl lg:text-3xl text-white pl-[16px] lg:pl-[25px]">
+          {title}
+        </h3>
         <SortingButton
           sortBy={sortBy}
           setSortBy={setSortBy}

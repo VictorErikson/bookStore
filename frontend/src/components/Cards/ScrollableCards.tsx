@@ -3,6 +3,7 @@ import type { Book } from "../../types/book";
 import type { User } from "../../types/user";
 import Card from "./Card";
 import type { SortOption, SortOptionWithRatings } from "../../types/sorting";
+import { useAnonData } from "../../contexts/anonDataContext";
 
 interface Props {
   books: Book[];
@@ -33,8 +34,22 @@ const ScrollableCards: React.FC<Props> = ({
   const isDragging = useRef(false);
   const startX = useRef(0);
   const initialScrollLeft = useRef(0);
+  const { anonRatings } = useAnonData();
 
   // sorting books
+
+  const buildRatingMap = () => {
+    if (user?.ratings) {
+      return new Map<string, number>(
+        user.ratings
+          .filter((r) => r.book)
+          .map((r) => [r.book!.documentId, r.rating] as [string, number])
+      );
+    }
+    return new Map<string, number>(
+      Object.entries(anonRatings).map(([id, anon]) => [id, anon.value])
+    );
+  };
 
   const sortedBooks = useMemo(() => {
     const copy = [...books];
@@ -60,11 +75,7 @@ const ScrollableCards: React.FC<Props> = ({
           b.title.localeCompare(a.title, undefined, { sensitivity: "base" })
         );
       case "My Rating: High to Low": {
-        const ratingMap = new Map<string, number>(
-          user.ratings.map(
-            (r) => [r.book!.documentId, r.rating] as [string, number]
-          )
-        );
+        const ratingMap = buildRatingMap();
 
         copy.sort((a, b) => {
           const ratingA = ratingMap.get(a.documentId) ?? 0;
@@ -75,11 +86,7 @@ const ScrollableCards: React.FC<Props> = ({
         return copy;
       }
       case "My Rating: Low to High": {
-        const ratingMap = new Map<string, number>(
-          user.ratings.map(
-            (r) => [r.book!.documentId, r.rating] as [string, number]
-          )
-        );
+        const ratingMap = buildRatingMap();
 
         copy.sort((a, b) => {
           const ratingA = ratingMap.get(a.documentId) ?? 0;
@@ -92,7 +99,7 @@ const ScrollableCards: React.FC<Props> = ({
       default:
         return copy;
     }
-  }, [books, sortBy]);
+  }, [books, sortBy, user?.ratings, anonRatings]);
 
   // draggable card-container
   // make sure we cancel drag if the mouse goes up anywhere on the page
@@ -131,7 +138,7 @@ const ScrollableCards: React.FC<Props> = ({
   return (
     <div
       ref={containerRef}
-      className="flex gap-[20px] px-[25px] py-[45px] overflow-x-auto no-scrollbar cursor-grab"
+      className="flex gap-[20px] px-[16px] lg:px-[25px] py-[30px] lg:py-[45px] overflow-x-auto no-scrollbar cursor-grab"
       onMouseDown={onMouseDown}
       onMouseMove={onMouseMove}
     >

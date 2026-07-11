@@ -15,7 +15,7 @@ import BookInfoBox from "../../components/BookInfoBox/BookInfoBox";
 import { useBookInfo } from "../../contexts/bookInfoContext";
 import ChildrenPart from "../../components/Children/ChildrenPart";
 import InspoPart from "../../components/InspoPart/InspoPart";
-// import RightSideMenu from "../../components/Header/RightSideMenu";
+import { useAnonData } from "../../contexts/anonDataContext";
 
 interface Props {
   user: User | null;
@@ -26,8 +26,6 @@ interface Props {
   favouritesRef: RefObject<HTMLElement>;
   ratedRef: RefObject<HTMLElement>;
   reviewsRef: RefObject<HTMLElement>;
-  // setMenuIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  // menuIsOpen: boolean;
 }
 
 const Home: React.FC<Props> = ({
@@ -39,8 +37,6 @@ const Home: React.FC<Props> = ({
   favouritesRef,
   ratedRef,
   reviewsRef,
-  // setMenuIsOpen,
-  // menuIsOpen,
 }) => {
   const [books, setBooks] = useState<Book[]>([]);
   const [warningMsg, setWarningMsg] = useState<string | null>(null);
@@ -51,6 +47,12 @@ const Home: React.FC<Props> = ({
   const childrensBooksRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
   const { bookInfoId, mousePos } = useBookInfo();
+  const { anonLikes, anonRatings } = useAnonData();
+
+  const anonStarredBooks = books.filter((b) =>
+    anonLikes.includes(b.documentId)
+  );
+  const anonRatedBooks = books.filter((b) => anonRatings[b.documentId]);
 
   const fetchBookById = async (documentId: string): Promise<Book> => {
     const response = await fetchData<{ data: Book }>(
@@ -90,13 +92,18 @@ const Home: React.FC<Props> = ({
   useEffect(() => {
     if (!user) return;
     const go = async () => {
+      const data = await fetchBooks();
+      setBooks(data);
+
       const starred = await Promise.all(
         user.starred.map((b) => fetchBookById(b.documentId))
       );
       setStarredBooks(starred);
 
       const rated = await Promise.all(
-        user.ratings.map((r) => fetchBookById(r.book.documentId))
+        user.ratings
+          .filter((r) => r.book)
+          .map((r) => fetchBookById(r.book!.documentId))
       );
       setRatedBooks(rated);
     };
@@ -116,7 +123,6 @@ const Home: React.FC<Props> = ({
   }, [books]);
 
   return (
-    // <div className="relative">
     <main className=" box-border">
       {warningMsg && <Warning msg={warningMsg} setWarningMsg={setWarningMsg} />}
       {bookInfoId && (
@@ -156,11 +162,6 @@ const Home: React.FC<Props> = ({
               }
             />
           )}
-          {/* <TrendingInfoBox
-            onClickScroll={() =>
-              trendingRef.current?.scrollIntoView({ behavior: "smooth" })
-            }
-          /> */}
           <BookCarousel />
           <LogedinHome
             books={books}
@@ -216,6 +217,39 @@ const Home: React.FC<Props> = ({
             />
           )}
           <BookCarousel />
+          {anonStarredBooks.length > 0 && (
+            <div ref={favouritesRef}>
+              <CardsSection
+                books={anonStarredBooks}
+                user={user}
+                setWarningMsg={setWarningMsg}
+                isLoggedin={isLoggedin}
+                setIsLoggedin={setIsLoggedin}
+                setBooks={setBooks}
+                setUser={setUser}
+                starredBooks={starredBooks}
+                ratedBooks={ratedBooks}
+                title={`Favourites ❤️`}
+              />
+            </div>
+          )}
+          {anonRatedBooks.length > 0 && (
+            <div ref={ratedRef}>
+              <CardsSection
+                books={anonRatedBooks}
+                user={user}
+                setWarningMsg={setWarningMsg}
+                isLoggedin={isLoggedin}
+                setIsLoggedin={setIsLoggedin}
+                setBooks={setBooks}
+                setUser={setUser}
+                starredBooks={starredBooks}
+                ratedBooks={ratedBooks}
+                title={`Ratings ⭐`}
+                sortRatings={true}
+              />
+            </div>
+          )}
           <InspoPart />
           <ChildrenPart
             onClickScroll={() =>
@@ -224,6 +258,7 @@ const Home: React.FC<Props> = ({
               })
             }
             childrensBooksRef={childrensBooksRef}
+            reviewsRef={reviewsRef}
             books={books.filter((book) => book.age === "child")}
             user={user}
             setWarningMsg={setWarningMsg}
@@ -234,18 +269,20 @@ const Home: React.FC<Props> = ({
             starredBooks={starredBooks}
             ratedBooks={ratedBooks}
           />
-          <CardsSection
-            books={books}
-            user={user}
-            setWarningMsg={setWarningMsg}
-            isLoggedin={isLoggedin}
-            setIsLoggedin={setIsLoggedin}
-            setBooks={setBooks}
-            setUser={setUser}
-            starredBooks={starredBooks}
-            ratedBooks={ratedBooks}
-            title={`Books 📖`}
-          />
+          <div ref={allBooksRef}>
+            <CardsSection
+              books={books}
+              user={user}
+              setWarningMsg={setWarningMsg}
+              isLoggedin={isLoggedin}
+              setIsLoggedin={setIsLoggedin}
+              setBooks={setBooks}
+              setUser={setUser}
+              starredBooks={starredBooks}
+              ratedBooks={ratedBooks}
+              title={`Books 📖`}
+            />
+          </div>
           {trendingBooks && (
             <div ref={trendingRef}>
               <CardsSection
@@ -265,8 +302,6 @@ const Home: React.FC<Props> = ({
         </>
       )}
     </main>
-    //   <RightSideMenu menuIsOpen={menuIsOpen} setMenuIsOpen={setMenuIsOpen} />
-    // </div>
   );
 };
 

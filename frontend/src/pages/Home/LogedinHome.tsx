@@ -39,7 +39,7 @@ const LogedinHome: React.FC<Props> = ({
   reviewsRef,
 }) => {
   return (
-    <div className="flex gap-[20px] w-screen overflow-hidden box-border h-full flex flex-col ">
+    <div className="flex gap-[20px] w-full overflow-hidden box-border h-full flex flex-col ">
       {/* {user.starred.length > 0 && ( */}
       {starredBooks.length > 0 && (
         <div ref={favouritesRef}>

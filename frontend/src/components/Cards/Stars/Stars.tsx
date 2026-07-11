@@ -7,7 +7,7 @@ import rateBook from "../../../services/rateBook";
 import fetchData from "../../../services/fetchData";
 import { BASE_URL } from "../../../config/api";
 import checkLoginStatus from "../../../services/checkLoginStatus";
-// import checkLoginStatus from "../../../services/checkLoginStatus";
+import { useAnonData } from "../../../contexts/anonDataContext";
 
 interface StarRatingProps {
   book: Book;
@@ -23,29 +23,38 @@ interface StarRatingProps {
 const StarRating: React.FC<StarRatingProps> = ({
   book,
   user,
-  setWarningMsg,
   isLoggedin,
   setBooks,
   setUser,
 }) => {
   const [hoveredStar, setHoveredStar] = useState<number | null>(null);
+  const { anonRatings, setAnonRating } = useAnonData();
 
   const bookRatings = book.ratings;
 
   const { userRating, userRatingId, userHasRated } = useMemo(() => {
-    if (!user?.ratings)
-      return { userRating: null, userRatingId: null, userHasRated: false };
+    if (isLoggedin && user?.ratings) {
+      const match = user.ratings.find(
+        (rating) => rating.book?.documentId === book.documentId
+      );
+      return {
+        userRating: match?.rating ?? null,
+        userRatingId: match ?? null,
+        userHasRated: !!match,
+      };
+    }
 
-    const match = user.ratings.find(
-      (rating) => rating.book?.documentId === book.documentId
-    );
+    const anon = anonRatings[book.documentId];
+    if (anon) {
+      return {
+        userRating: anon.value,
+        userRatingId: null,
+        userHasRated: true,
+      };
+    }
 
-    return {
-      userRating: match?.rating ?? null,
-      userRatingId: match ?? null,
-      userHasRated: !!match,
-    };
-  }, [user?.ratings, book.documentId]);
+    return { userRating: null, userRatingId: null, userHasRated: false };
+  }, [isLoggedin, user?.ratings, anonRatings, book.documentId]);
 
   let totalRatings = 0;
 
@@ -59,6 +68,17 @@ const StarRating: React.FC<StarRatingProps> = ({
     averageRatingEven = Math.round(averageRatingUneven);
   }
 
+  const refreshBook = async () => {
+    const responseBook = await fetchData<{ data: Book }>(
+      BASE_URL + `/api/books/${book.documentId}?populate=*`
+    );
+    setBooks((prev) =>
+      prev.map((b) =>
+        b.documentId === book.documentId ? responseBook.data : b
+      )
+    );
+  };
+
   const stars = Array.from({ length: 5 }).map((_, i) => {
     let icon;
 
@@ -70,19 +90,20 @@ const StarRating: React.FC<StarRatingProps> = ({
               e.stopPropagation();
               if (isLoggedin) {
                 await rateBook(i, userRatingId, userHasRated, user, book);
-                const responseBook = await fetchData<{ data: Book }>(
-                  BASE_URL + `/api/books/${book.documentId}?populate=*`
-                );
-                console.log("bookRatings: ", bookRatings);
+                await refreshBook();
                 const responseUser = await checkLoginStatus();
                 setUser(responseUser);
-                setBooks((prev) =>
-                  prev.map((b) =>
-                    b.documentId === book.documentId ? responseBook.data : b
-                  )
-                );
               } else {
-                setWarningMsg("Please login to be able to rate");
+                const response = await rateBook(
+                  i,
+                  null,
+                  false,
+                  undefined,
+                  book,
+                  anonRatings[book.documentId]?.ratingDocumentId
+                );
+                setAnonRating(book.documentId, i + 1, response.data.documentId);
+                await refreshBook();
               }
             }}
           >

@@ -7,6 +7,8 @@ import type { User } from "./types/user";
 import checkLoginStatus from "./services/checkLoginStatus";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { BookInfoProvider } from "./contexts/bookInfoContext";
+import { AnonDataProvider } from "./contexts/anonDataContext";
+import { CartProvider } from "./contexts/cartContext";
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -29,6 +31,8 @@ function App() {
   return (
     <BookInfoProvider>
       <ThemeProvider>
+        <AnonDataProvider>
+        <CartProvider>
         <Router>
           <Header
             user={user}
@@ -63,6 +67,8 @@ function App() {
             />
           </Routes>
         </Router>
+        </CartProvider>
+        </AnonDataProvider>
       </ThemeProvider>
     </BookInfoProvider>
   );
