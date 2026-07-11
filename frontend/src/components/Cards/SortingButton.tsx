@@ -1,8 +1,8 @@
-import type { SortOption, SortOptionWithRatings } from "../../types/sorting";
+import type { SortOptionWithRatings } from "../../types/sorting";
 
 interface Props {
-  sortBy: SortOption;
-  setSortBy: React.Dispatch<React.SetStateAction<SortOption>>;
+  sortBy: SortOptionWithRatings;
+  setSortBy: React.Dispatch<React.SetStateAction<SortOptionWithRatings>>;
   sortRatings?: boolean;
 }
 
@@ -11,7 +11,7 @@ const SortingButton: React.FC<Props> = ({
   setSortBy,
   sortRatings = false,
 }) => {
-  let sortOptions: SortOptionWithRatings[] | SortOption | "" = "";
+  let sortOptions: SortOptionWithRatings[];
 
   if (sortRatings) {
     sortOptions = [

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useCart } from "../../contexts/cartContext";
 import { useTheme } from "../../contexts/ThemeContext";
-import { BASE_URL } from "../../config/api";
+import { mediaUrl } from "../../config/api";
 import IconMenuOpen from "../logos/IconMenuOpen";
 
 const CartMenu = () => {
@@ -62,7 +62,7 @@ const CartMenu = () => {
               <div key={item.documentId} className="flex gap-3 items-center">
                 {item.coverUrl && (
                   <img
-                    src={BASE_URL + item.coverUrl}
+                    src={mediaUrl(item.coverUrl)}
                     alt={item.title}
                     className="w-[44px] h-[64px] object-cover rounded"
                   />

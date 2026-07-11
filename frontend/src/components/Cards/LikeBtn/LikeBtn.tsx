@@ -8,7 +8,7 @@ import checkLoginStatus from "../../../services/checkLoginStatus";
 import { useAnonData } from "../../../contexts/anonDataContext";
 
 interface Props {
-  user: User | undefined;
+  user?: User | null;
   book: Book;
   isLoggedin: boolean;
   setWarningMsg: (msg: string) => void;
@@ -54,9 +54,9 @@ const LikeBtn: React.FC<Props> = ({
       }
     };
 
-    const updatedLikes = toggleUserInLiked(book.liked, user);
+    const updatedLikes = toggleUserInLiked(book.liked, user ?? undefined);
 
-    const updatedBook = await updateBook(
+    await updateBook(
       book.documentId,
       updatedLikes.map((u) => u.documentId)
     );

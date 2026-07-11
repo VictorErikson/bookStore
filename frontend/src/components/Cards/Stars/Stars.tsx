@@ -11,7 +11,7 @@ import { useAnonData } from "../../../contexts/anonDataContext";
 
 interface StarRatingProps {
   book: Book;
-  user?: User;
+  user?: User | null;
   userRatings?: UserRating[];
   setWarningMsg: (msg: string) => void;
   isLoggedin: boolean;

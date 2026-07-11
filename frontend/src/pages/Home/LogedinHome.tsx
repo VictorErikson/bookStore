@@ -7,7 +7,7 @@ import InspoPart from "../../components/InspoPart/InspoPart";
 
 interface Props {
   books: Book[];
-  user?: User;
+  user?: User | null;
   setWarningMsg: (msg: string) => void;
   isLoggedin: boolean;
   setIsLoggedin: React.Dispatch<React.SetStateAction<boolean>>;
@@ -15,11 +15,11 @@ interface Props {
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
   starredBooks: Book[];
   ratedBooks: Book[];
-  childrensBooksRef: RefObject<HTMLElement>;
-  allBooksRef: RefObject<HTMLElement>;
-  favouritesRef: RefObject<HTMLElement>;
-  ratedRef: RefObject<HTMLElement>;
-  reviewsRef: RefObject<HTMLElement>;
+  childrensBooksRef: RefObject<HTMLDivElement | null>;
+  allBooksRef: RefObject<HTMLDivElement | null> | null;
+  favouritesRef: RefObject<HTMLDivElement | null>;
+  ratedRef: RefObject<HTMLDivElement | null>;
+  reviewsRef: RefObject<HTMLDivElement | null>;
 }
 
 const LogedinHome: React.FC<Props> = ({

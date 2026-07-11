@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BASE_URL } from "../../config/api";
+import { mediaUrl } from "../../config/api";
 import { useBookInfo } from "../../contexts/bookInfoContext";
 import { useCart } from "../../contexts/cartContext";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -10,7 +10,7 @@ import StarRating from "./Stars/Stars";
 
 interface Props {
   book: Book;
-  user?: User;
+  user?: User | null;
   setWarningMsg: (msg: string) => void;
   isLoggedin: boolean;
   setIsLoggedin: React.Dispatch<React.SetStateAction<boolean>>;
@@ -37,7 +37,7 @@ const Card: React.FC<Props> = ({
       id="card"
       className="w-[270px] h-[456px] flex-shrink-0 bg-contain bg-no-repeat bg-top flex flex-col justify-end shadow-2xl rounded-t-3xl rounded-b-3xl duration-400 hover:scale-105 "
       style={{
-        backgroundImage: `url(${BASE_URL + book.cover?.url})`,
+        backgroundImage: `url(${mediaUrl(book.cover?.url)})`,
       }}
       onClick={() => setBookInfoId(book.documentId)}
     >

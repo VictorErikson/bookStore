@@ -22,10 +22,10 @@ interface Props {
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
   isLoggedin: boolean;
   setIsLoggedin: React.Dispatch<React.SetStateAction<boolean>>;
-  allBooksRef: RefObject<HTMLElement> | null;
-  favouritesRef: RefObject<HTMLElement>;
-  ratedRef: RefObject<HTMLElement>;
-  reviewsRef: RefObject<HTMLElement>;
+  allBooksRef: RefObject<HTMLDivElement | null> | null;
+  favouritesRef: RefObject<HTMLDivElement | null>;
+  ratedRef: RefObject<HTMLDivElement | null>;
+  reviewsRef: RefObject<HTMLDivElement | null>;
 }
 
 const Home: React.FC<Props> = ({
@@ -43,6 +43,7 @@ const Home: React.FC<Props> = ({
   const [starredBooks, setStarredBooks] = useState<Book[]>([]);
   const [ratedBooks, setRatedBooks] = useState<Book[]>([]);
   const [trendingBooks, setTrendingBooks] = useState<Book[]>([]);
+  const [serverWaking, setServerWaking] = useState(false);
   const trendingRef = useRef<HTMLDivElement>(null);
   const childrensBooksRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
@@ -77,16 +78,22 @@ const Home: React.FC<Props> = ({
   }, [theme]);
 
   useEffect(() => {
+    const slowTimer = window.setTimeout(() => setServerWaking(true), 2500);
+
     const loadBooks = async () => {
       try {
         const data = await fetchBooks();
         setBooks(data);
       } catch (error) {
         console.error("Failed to fetch books:", error);
+      } finally {
+        window.clearTimeout(slowTimer);
+        setServerWaking(false);
       }
     };
 
     loadBooks();
+    return () => window.clearTimeout(slowTimer);
   }, []);
 
   useEffect(() => {
@@ -124,6 +131,14 @@ const Home: React.FC<Props> = ({
 
   return (
     <main className=" box-border">
+      {serverWaking && books.length === 0 && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-[#201030] text-white px-6 py-3 rounded-full shadow-2xl">
+          <span className="w-[18px] h-[18px] border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          <p className="text-sm">
+            Waking up the bookstore server, this can take up to a minute...
+          </p>
+        </div>
+      )}
       {warningMsg && <Warning msg={warningMsg} setWarningMsg={setWarningMsg} />}
       {bookInfoId && (
         <div
@@ -142,8 +157,6 @@ const Home: React.FC<Props> = ({
             setIsLoggedin={setIsLoggedin}
             setBooks={setBooks}
             setUser={setUser}
-            starredBooks={starredBooks}
-            ratedBooks={ratedBooks}
           />
         </div>
       )}
@@ -173,11 +186,6 @@ const Home: React.FC<Props> = ({
             setUser={setUser}
             starredBooks={starredBooks}
             ratedBooks={ratedBooks}
-            onClickScroll={() =>
-              childrensBooksRef.current?.scrollIntoView({
-                behavior: "smooth",
-              })
-            }
             childrensBooksRef={childrensBooksRef}
             allBooksRef={allBooksRef}
             favouritesRef={favouritesRef}

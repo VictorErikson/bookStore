@@ -2,7 +2,7 @@ import type { RefObject } from "react";
 import ReviewCard from "./ReviewCard";
 
 interface Props {
-  reviewsRef: RefObject<HTMLElement>;
+  reviewsRef: RefObject<HTMLDivElement | null>;
 }
 
 const ReviewsPart: React.FC<Props> = ({ reviewsRef }) => {

@@ -16,10 +16,10 @@ interface Props {
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
   isLoggedin: boolean;
   setIsLoggedin: React.Dispatch<React.SetStateAction<boolean>>;
-  allBooksRef: RefObject<HTMLElement> | null;
-  favouritesRef: RefObject<HTMLElement>;
-  ratedRef: RefObject<HTMLElement>;
-  reviewsRef: RefObject<HTMLElement>;
+  allBooksRef: RefObject<HTMLDivElement | null> | null;
+  favouritesRef: RefObject<HTMLDivElement | null>;
+  ratedRef: RefObject<HTMLDivElement | null>;
+  reviewsRef: RefObject<HTMLDivElement | null>;
 }
 
 const Header: React.FC<Props> = ({

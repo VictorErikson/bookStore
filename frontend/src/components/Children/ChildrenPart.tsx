@@ -6,18 +6,18 @@ import ReviewsPart from "../ReviewsPart/ReviewsPart";
 
 interface Props {
   books: Book[] | null;
-  user?: User;
+  user?: User | null;
   setWarningMsg: (msg: string) => void;
   isLoggedin: boolean;
   setIsLoggedin: React.Dispatch<React.SetStateAction<boolean>>;
   setBooks: React.Dispatch<React.SetStateAction<Book[]>>;
-  setUser?: React.Dispatch<React.SetStateAction<User | null>>;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
   starredBooks: Book[];
   ratedBooks: Book[];
   sortRatings?: boolean;
   onClickScroll?: () => void;
-  childrensBooksRef: RefObject<HTMLElement>;
-  reviewsRef: RefObject<HTMLElement>;
+  childrensBooksRef: RefObject<HTMLDivElement | null>;
+  reviewsRef: RefObject<HTMLDivElement | null>;
 }
 
 const ChildrenPart: React.FC<Props> = ({
@@ -62,7 +62,7 @@ const ChildrenPart: React.FC<Props> = ({
         </div>
         <div ref={childrensBooksRef}>
           <CardsSection
-            books={books}
+            books={books ?? []}
             user={user}
             setWarningMsg={setWarningMsg}
             isLoggedin={isLoggedin}

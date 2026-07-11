@@ -1,4 +1,5 @@
 import axios from "axios";
+import { BASE_URL } from "../../config/api";
 import IconLogin from "../logos/IconLogin";
 import { useRef } from "react";
 import checkLoginStatus from "../../services/checkLoginStatus";
@@ -32,13 +33,10 @@ const LoginMenu: React.FC<MenuProps> = ({
       return setLoginMsg("Please enter password and username");
     }
     try {
-      const response = await axios.post(
-        "http://localhost:1338/api/auth/local",
-        {
-          identifier,
-          password,
-        }
-      );
+      const response = await axios.post(`${BASE_URL}/api/auth/local`, {
+        identifier,
+        password,
+      });
 
       sessionStorage.setItem("token", response.data.jwt);
       let fetchedUser = await checkLoginStatus();

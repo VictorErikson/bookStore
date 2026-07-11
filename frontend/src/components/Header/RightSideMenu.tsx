@@ -8,10 +8,10 @@ interface Props {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
   setIsLoggedin: React.Dispatch<React.SetStateAction<boolean>>;
-  allBooksRef: RefObject<HTMLElement> | null;
-  favouritesRef: RefObject<HTMLElement>;
-  ratedRef: RefObject<HTMLElement>;
-  reviewsRef: RefObject<HTMLElement>;
+  allBooksRef: RefObject<HTMLDivElement | null> | null;
+  favouritesRef: RefObject<HTMLDivElement | null>;
+  ratedRef: RefObject<HTMLDivElement | null>;
+  reviewsRef: RefObject<HTMLDivElement | null>;
 }
 
 const RightSideMenu: React.FC<Props> = ({
@@ -25,7 +25,7 @@ const RightSideMenu: React.FC<Props> = ({
   ratedRef,
   reviewsRef,
 }) => {
-  const goTo = (ref: RefObject<HTMLElement> | null) => {
+  const goTo = (ref: RefObject<HTMLDivElement | null> | null) => {
     ref?.current?.scrollIntoView({ behavior: "smooth" });
     setMenuIsOpen(false);
   };
@@ -37,7 +37,7 @@ const RightSideMenu: React.FC<Props> = ({
     setMenuIsOpen(false);
   };
 
-  const navItems: { label: string; ref: RefObject<HTMLElement> | null }[] = [
+  const navItems: { label: string; ref: RefObject<HTMLDivElement | null> | null }[] = [
     { label: "Books", ref: allBooksRef },
     { label: "Favourites", ref: favouritesRef },
     { label: "Ratings", ref: ratedRef },

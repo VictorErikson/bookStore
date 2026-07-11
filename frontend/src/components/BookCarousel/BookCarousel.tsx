@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BASE_URL } from "../../config/api";
+import { BASE_URL, mediaUrl } from "../../config/api";
 import type { Cover } from "../../types/book";
 import axios from "axios";
 
@@ -55,7 +55,7 @@ const BookCarousel = () => {
         {pool.map((img, i) => (
           <div key={i} className="flex-none" style={{ width: W }}>
             <img
-              src={BASE_URL + img.url}
+              src={mediaUrl(img.url)}
               alt={img.name}
               className="w-full h-full object-cover"
             />
@@ -75,7 +75,7 @@ const BookCarousel = () => {
         {pool2.map((img, i) => (
           <div key={i} className="flex-none" style={{ width: W }}>
             <img
-              src={BASE_URL + img.url}
+              src={mediaUrl(img.url)}
               alt={img.name}
               className="w-full h-full object-cover"
             />

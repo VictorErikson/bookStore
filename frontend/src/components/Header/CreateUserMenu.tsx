@@ -1,4 +1,5 @@
 import axios from "axios";
+import { BASE_URL } from "../../config/api";
 import IconLogin from "../logos/IconLogin";
 import { useRef } from "react";
 import checkLoginStatus from "../../services/checkLoginStatus";
@@ -34,7 +35,7 @@ const CreateUserMenu: React.FC<MenuProps> = ({
     }
     try {
       const response = await axios.post(
-        "http://localhost:1338/api/auth/local/register",
+        `${BASE_URL}/api/auth/local/register`,
         {
           username,
           email,

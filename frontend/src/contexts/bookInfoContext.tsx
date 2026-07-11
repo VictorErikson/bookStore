@@ -1,5 +1,4 @@
 import { createContext, useContext, useState } from "react";
-import type { Book } from "../types/book";
 
 interface BookInfoContextType {
   bookInfoId: string | null;

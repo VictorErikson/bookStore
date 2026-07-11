@@ -2,20 +2,20 @@ import React, { useRef, useEffect, useMemo } from "react";
 import type { Book } from "../../types/book";
 import type { User } from "../../types/user";
 import Card from "./Card";
-import type { SortOption, SortOptionWithRatings } from "../../types/sorting";
+import type { SortOptionWithRatings } from "../../types/sorting";
 import { useAnonData } from "../../contexts/anonDataContext";
 
 interface Props {
   books: Book[];
-  user?: User;
+  user?: User | null;
   setWarningMsg: (msg: string) => void;
   isLoggedin: boolean;
   setIsLoggedin: React.Dispatch<React.SetStateAction<boolean>>;
   setBooks: React.Dispatch<React.SetStateAction<Book[]>>;
-  setUser?: React.Dispatch<React.SetStateAction<User | null>>;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
   starredBooks: Book[];
   ratedBooks: Book[];
-  sortBy: SortOption | SortOptionWithRatings;
+  sortBy: SortOptionWithRatings;
 }
 
 const ScrollableCards: React.FC<Props> = ({
@@ -26,8 +26,6 @@ const ScrollableCards: React.FC<Props> = ({
   setIsLoggedin,
   setBooks,
   setUser,
-  starredBooks,
-  ratedBooks,
   sortBy,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -152,8 +150,6 @@ const ScrollableCards: React.FC<Props> = ({
           setIsLoggedin={setIsLoggedin}
           setBooks={setBooks}
           setUser={setUser}
-          starredBooks={starredBooks}
-          ratedBooks={ratedBooks}
         />
       ))}
     </div>

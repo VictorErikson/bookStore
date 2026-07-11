@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { BASE_URL } from "../../config/api";
+import { mediaUrl } from "../../config/api";
 import { useTheme } from "../../contexts/ThemeContext";
 import type { Book } from "../../types/book";
 import type { User } from "../../types/user";
@@ -10,7 +10,7 @@ import { useCart } from "../../contexts/cartContext";
 
 interface Props {
   book: Book;
-  user?: User;
+  user?: User | null;
   setWarningMsg: (msg: string) => void;
   isLoggedin: boolean;
   setIsLoggedin: React.Dispatch<React.SetStateAction<boolean>>;
@@ -54,7 +54,7 @@ const BookInfoBox: React.FC<Props> = ({
       >
         <div className="left flex-shrink-0">
           <img
-            src={BASE_URL + book.cover?.url}
+            src={mediaUrl(book.cover?.url)}
             alt="cover"
             className="w-full max-w-[200px] mx-auto lg:max-w-[290px] lg:mx-0"
           />
