@@ -14,6 +14,7 @@ const mergeAnonData = async (
   const headers = {
     Authorization: `Bearer ${sessionStorage.getItem("token")}`,
   };
+  let failedCount = 0;
 
   for (const [bookId, anon] of Object.entries(anonRatings)) {
     try {
@@ -47,6 +48,7 @@ const mergeAnonData = async (
       }
     } catch (error) {
       console.error("Failed to merge rating for book", bookId, error);
+      failedCount++;
     }
   }
 
@@ -62,8 +64,11 @@ const mergeAnonData = async (
       }
     } catch (error) {
       console.error("Failed to merge like for book", bookId, error);
+      failedCount++;
     }
   }
+
+  return failedCount;
 };
 
 export default mergeAnonData;

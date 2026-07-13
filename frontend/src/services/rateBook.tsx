@@ -34,7 +34,7 @@ const rateBook = async (
       const response = await axios.put<RatingResponse>(
         `${BASE_URL}/api/ratings/${existingId}?populate=*`,
         { data: { rating: value } },
-        { headers }
+        { headers, timeout: 15000 }
       );
       return response.data;
     }
@@ -49,7 +49,7 @@ const rateBook = async (
     const response = await axios.post<RatingResponse>(
       `${BASE_URL}/api/ratings?populate=*`,
       postData,
-      { headers }
+      { headers, timeout: 15000 }
     );
     return response.data;
   } catch (error) {

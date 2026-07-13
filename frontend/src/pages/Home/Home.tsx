@@ -3,12 +3,11 @@ import fetchBooks from "../../services/fetchBooks";
 import type { Book } from "../../types/book";
 import type { User } from "../../types/user";
 import Warning from "../../components/warningMsgs/Warning";
-import { BASE_URL } from "../../config/api";
-import fetchData from "../../services/fetchData";
 import BookCarousel from "../../components/BookCarousel/BookCarousel";
 import TrendingInfoBox from "../../components/TrendingInfoBox/TrendingInfoBox";
 import LogedinHome from "./LogedinHome";
 import CardsSection from "../../components/Cards/CardsSection";
+import SectionSkeleton from "../../components/Cards/SectionSkeleton";
 import SaleInfoBox from "../../components/SaleInfoBox/SaleInfoBox";
 import { useTheme } from "../../contexts/ThemeContext";
 import BookInfoBox from "../../components/BookInfoBox/BookInfoBox";
@@ -16,6 +15,11 @@ import { useBookInfo } from "../../contexts/bookInfoContext";
 import ChildrenPart from "../../components/Children/ChildrenPart";
 import InspoPart from "../../components/InspoPart/InspoPart";
 import { useAnonData } from "../../contexts/anonDataContext";
+import {
+  BOOKS_CACHE_KEY,
+  readCache,
+  writeCache,
+} from "../../services/sessionCache";
 
 interface Props {
   user: User | null;
@@ -38,12 +42,16 @@ const Home: React.FC<Props> = ({
   ratedRef,
   reviewsRef,
 }) => {
-  const [books, setBooks] = useState<Book[]>([]);
+  const [books, setBooks] = useState<Book[]>(
+    () => readCache<Book[]>(BOOKS_CACHE_KEY) ?? []
+  );
   const [warningMsg, setWarningMsg] = useState<string | null>(null);
-  const [starredBooks, setStarredBooks] = useState<Book[]>([]);
-  const [ratedBooks, setRatedBooks] = useState<Book[]>([]);
   const [trendingBooks, setTrendingBooks] = useState<Book[]>([]);
   const [serverWaking, setServerWaking] = useState(false);
+  const [booksLoading, setBooksLoading] = useState(true);
+  const [booksError, setBooksError] = useState(false);
+  const [loadAttempt, setLoadAttempt] = useState(0);
+  const prevUserId = useRef<string | null>(user?.documentId ?? null);
   const trendingRef = useRef<HTMLDivElement>(null);
   const childrensBooksRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
@@ -55,12 +63,14 @@ const Home: React.FC<Props> = ({
   );
   const anonRatedBooks = books.filter((b) => anonRatings[b.documentId]);
 
-  const fetchBookById = async (documentId: string): Promise<Book> => {
-    const response = await fetchData<{ data: Book }>(
-      `${BASE_URL}/api/books/${documentId}?populate=*`
-    );
-    return response.data;
-  };
+  const starredBooks = books.filter((b) =>
+    user?.starred.some((s) => s.documentId === b.documentId)
+  );
+  const ratedBooks = books.filter((b) =>
+    user?.ratings.some((r) => r.book?.documentId === b.documentId)
+  );
+
+  const booksReady = books.length > 0 || !booksLoading;
 
   useEffect(() => {
     const root = document.getElementById("root");
@@ -78,44 +88,54 @@ const Home: React.FC<Props> = ({
   }, [theme]);
 
   useEffect(() => {
+    if (books.length > 0) writeCache(BOOKS_CACHE_KEY, books);
+  }, [books]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    setBooksLoading(true);
+    setBooksError(false);
     const slowTimer = window.setTimeout(() => setServerWaking(true), 2500);
 
     const loadBooks = async () => {
       try {
-        const data = await fetchBooks();
+        const data = await fetchBooks({ retry: true, signal: controller.signal });
         setBooks(data);
       } catch (error) {
         console.error("Failed to fetch books:", error);
+        if (!controller.signal.aborted) setBooksError(true);
       } finally {
         window.clearTimeout(slowTimer);
         setServerWaking(false);
+        if (!controller.signal.aborted) setBooksLoading(false);
       }
     };
 
     loadBooks();
-    return () => window.clearTimeout(slowTimer);
-  }, []);
+    return () => {
+      window.clearTimeout(slowTimer);
+      controller.abort();
+    };
+  }, [loadAttempt]);
 
   useEffect(() => {
-    if (!user) return;
-    const go = async () => {
-      const data = await fetchBooks();
-      setBooks(data);
+    const userId = user?.documentId ?? null;
+    if (userId === prevUserId.current) return;
+    prevUserId.current = userId;
+    if (!userId) return;
 
-      const starred = await Promise.all(
-        user.starred.map((b) => fetchBookById(b.documentId))
-      );
-      setStarredBooks(starred);
-
-      const rated = await Promise.all(
-        user.ratings
-          .filter((r) => r.book)
-          .map((r) => fetchBookById(r.book!.documentId))
-      );
-      setRatedBooks(rated);
+    const controller = new AbortController();
+    const refreshBooks = async () => {
+      try {
+        const data = await fetchBooks({ retry: true, signal: controller.signal });
+        setBooks(data);
+      } catch (error) {
+        console.error("Failed to refresh books:", error);
+      }
     };
-    go();
-  }, [user]);
+    refreshBooks();
+    return () => controller.abort();
+  }, [user?.documentId]);
 
   useEffect(() => {
     setTrendingBooks(
@@ -137,6 +157,17 @@ const Home: React.FC<Props> = ({
           <p className="text-sm">
             Waking up the bookstore server, this can take up to a minute...
           </p>
+        </div>
+      )}
+      {booksError && books.length === 0 && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-[#7a1f2b] text-white px-6 py-3 rounded-full shadow-2xl">
+          <p className="text-sm">Couldn't reach the bookstore server.</p>
+          <button
+            onClick={() => setLoadAttempt((a) => a + 1)}
+            className="text-sm underline hover:cursor-pointer"
+          >
+            Try again
+          </button>
         </div>
       )}
       {warningMsg && <Warning msg={warningMsg} setWarningMsg={setWarningMsg} />}
@@ -186,27 +217,32 @@ const Home: React.FC<Props> = ({
             setUser={setUser}
             starredBooks={starredBooks}
             ratedBooks={ratedBooks}
+            booksReady={booksReady}
             childrensBooksRef={childrensBooksRef}
             allBooksRef={allBooksRef}
             favouritesRef={favouritesRef}
             ratedRef={ratedRef}
             reviewsRef={reviewsRef}
           />
-          {trendingBooks && (
-            <div ref={trendingRef}>
-              <CardsSection
-                books={trendingBooks}
-                user={user}
-                setWarningMsg={setWarningMsg}
-                isLoggedin={isLoggedin}
-                setIsLoggedin={setIsLoggedin}
-                setBooks={setBooks}
-                setUser={setUser}
-                starredBooks={starredBooks}
-                ratedBooks={ratedBooks}
-                title={`Trending ⭐`}
-              />
-            </div>
+          {!booksReady ? (
+            <SectionSkeleton title={`Trending ⭐`} />
+          ) : (
+            trendingBooks.length > 0 && (
+              <div ref={trendingRef}>
+                <CardsSection
+                  books={trendingBooks}
+                  user={user}
+                  setWarningMsg={setWarningMsg}
+                  isLoggedin={isLoggedin}
+                  setIsLoggedin={setIsLoggedin}
+                  setBooks={setBooks}
+                  setUser={setUser}
+                  starredBooks={starredBooks}
+                  ratedBooks={ratedBooks}
+                  title={`Trending ⭐`}
+                />
+              </div>
+            )
           )}
         </>
       ) : (
@@ -278,23 +314,11 @@ const Home: React.FC<Props> = ({
             ratedBooks={ratedBooks}
           />
           <div ref={allBooksRef}>
-            <CardsSection
-              books={books}
-              user={user}
-              setWarningMsg={setWarningMsg}
-              isLoggedin={isLoggedin}
-              setIsLoggedin={setIsLoggedin}
-              setBooks={setBooks}
-              setUser={setUser}
-              starredBooks={starredBooks}
-              ratedBooks={ratedBooks}
-              title={`Books 📖`}
-            />
-          </div>
-          {trendingBooks && (
-            <div ref={trendingRef}>
+            {!booksReady ? (
+              <SectionSkeleton title={`Books 📖`} />
+            ) : (
               <CardsSection
-                books={trendingBooks}
+                books={books}
                 user={user}
                 setWarningMsg={setWarningMsg}
                 isLoggedin={isLoggedin}
@@ -303,9 +327,29 @@ const Home: React.FC<Props> = ({
                 setUser={setUser}
                 starredBooks={starredBooks}
                 ratedBooks={ratedBooks}
-                title={`Trending ⭐`}
+                title={`Books 📖`}
               />
-            </div>
+            )}
+          </div>
+          {!booksReady ? (
+            <SectionSkeleton title={`Trending ⭐`} />
+          ) : (
+            trendingBooks.length > 0 && (
+              <div ref={trendingRef}>
+                <CardsSection
+                  books={trendingBooks}
+                  user={user}
+                  setWarningMsg={setWarningMsg}
+                  isLoggedin={isLoggedin}
+                  setIsLoggedin={setIsLoggedin}
+                  setBooks={setBooks}
+                  setUser={setUser}
+                  starredBooks={starredBooks}
+                  ratedBooks={ratedBooks}
+                  title={`Trending ⭐`}
+                />
+              </div>
+            )
           )}
         </>
       )}

@@ -1,5 +1,7 @@
 import type { RefObject } from "react";
 import CardsSection from "../../components/Cards/CardsSection";
+import SectionSkeleton from "../../components/Cards/SectionSkeleton";
+import EmptySection from "../../components/Cards/EmptySection";
 import ChildrenPart from "../../components/Children/ChildrenPart";
 import type { Book } from "../../types/book";
 import type { User } from "../../types/user";
@@ -15,6 +17,7 @@ interface Props {
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
   starredBooks: Book[];
   ratedBooks: Book[];
+  booksReady: boolean;
   childrensBooksRef: RefObject<HTMLDivElement | null>;
   allBooksRef: RefObject<HTMLDivElement | null> | null;
   favouritesRef: RefObject<HTMLDivElement | null>;
@@ -32,6 +35,7 @@ const LogedinHome: React.FC<Props> = ({
   setUser,
   starredBooks,
   ratedBooks,
+  booksReady,
   childrensBooksRef,
   allBooksRef,
   favouritesRef,
@@ -40,8 +44,7 @@ const LogedinHome: React.FC<Props> = ({
 }) => {
   return (
     <div className="flex gap-[20px] w-full overflow-hidden box-border h-full flex flex-col ">
-      {/* {user.starred.length > 0 && ( */}
-      {starredBooks.length > 0 && (
+      {starredBooks.length > 0 ? (
         <div ref={favouritesRef}>
           <CardsSection
             books={starredBooks.filter(
@@ -59,8 +62,15 @@ const LogedinHome: React.FC<Props> = ({
             title={`${user?.username}s Favourites ❤️`}
           />
         </div>
-      )}
-      {ratedBooks.length > 0 && (
+      ) : booksReady ? (
+        <div ref={favouritesRef}>
+          <EmptySection
+            title={`${user?.username}s Favourites ❤️`}
+            message="No favourites yet. Tap the ❤️ on any book you love and it'll be waiting for you here."
+          />
+        </div>
+      ) : null}
+      {ratedBooks.length > 0 ? (
         <div ref={ratedRef}>
           <CardsSection
             books={ratedBooks.filter(
@@ -79,7 +89,14 @@ const LogedinHome: React.FC<Props> = ({
             sortRatings={true}
           />
         </div>
-      )}
+      ) : booksReady ? (
+        <div ref={ratedRef}>
+          <EmptySection
+            title={`${user?.username}s Ratings ⭐`}
+            message="You haven't rated anything yet. Give a book some stars and it'll show up here, your next favorite read might be one click away."
+          />
+        </div>
+      ) : null}
       <InspoPart />
       <ChildrenPart
         onClickScroll={() =>
@@ -98,18 +115,22 @@ const LogedinHome: React.FC<Props> = ({
         reviewsRef={reviewsRef}
       />
       <div ref={allBooksRef}>
-        <CardsSection
-          books={books}
-          user={user}
-          setWarningMsg={setWarningMsg}
-          isLoggedin={isLoggedin}
-          setIsLoggedin={setIsLoggedin}
-          setBooks={setBooks}
-          setUser={setUser}
-          starredBooks={starredBooks}
-          ratedBooks={ratedBooks}
-          title={"Books 📖"}
-        />
+        {!booksReady ? (
+          <SectionSkeleton title={`Books 📖`} />
+        ) : (
+          <CardsSection
+            books={books}
+            user={user}
+            setWarningMsg={setWarningMsg}
+            isLoggedin={isLoggedin}
+            setIsLoggedin={setIsLoggedin}
+            setBooks={setBooks}
+            setUser={setUser}
+            starredBooks={starredBooks}
+            ratedBooks={ratedBooks}
+            title={"Books 📖"}
+          />
+        )}
       </div>
     </div>
   );

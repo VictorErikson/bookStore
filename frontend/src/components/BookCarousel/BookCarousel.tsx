@@ -1,36 +1,53 @@
 import { useEffect, useState } from "react";
 import { BASE_URL, mediaUrl } from "../../config/api";
 import type { Cover } from "../../types/book";
-import axios from "axios";
+import { fetchWithRetry } from "../../services/fetchData";
 
 const BookCarousel = () => {
   const [carousel1Images, setCarousel1Images] = useState<Cover[]>([]);
   const [carousel2Images, setCarousel2Images] = useState<Cover[]>([]);
+  const [imagesLoading, setImagesLoading] = useState(true);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const loadImages = async () => {
       try {
-        const response = await axios.get<Cover[]>(
-          BASE_URL + `/api/upload/files?populate=*`
+        const files = await fetchWithRetry<Cover[]>(
+          BASE_URL + `/api/upload/files?populate=*`,
+          controller.signal
         );
         setCarousel1Images(
-          response.data.filter((file) => file.name.includes("carousel1"))
+          files.filter((file) => file.name.includes("carousel1"))
         );
         setCarousel2Images(
-          response.data.filter((file) => file.name.includes("carousel2"))
+          files.filter((file) => file.name.includes("carousel2"))
         );
       } catch (error) {
         console.error("Failed to fetch images:", error);
+      } finally {
+        if (!controller.signal.aborted) setImagesLoading(false);
       }
     };
 
     loadImages();
+    return () => controller.abort();
   }, []);
 
-  const N = carousel1Images.length; 
+  const N = carousel1Images.length;
   const N2 = carousel2Images.length;
-  const G = 12; 
-  const W = "7%"; 
+  const G = 12;
+  const W = "7%";
+
+  if (N === 0 && N2 === 0) {
+    if (!imagesLoading) return null;
+    return (
+      <div className="overflow-hidden w-full flex flex-col gap-[15px] pt-[80px] pb-[80px]">
+        <div className="h-[110px] mx-[16px] rounded bg-[#35353f]/40 animate-pulse" />
+        <div className="h-[110px] mx-[16px] rounded bg-[#35353f]/40 animate-pulse" />
+      </div>
+    );
+  }
 
   const pool = [...carousel1Images, ...carousel1Images];
   const pool2 = [...carousel2Images, ...carousel2Images];
@@ -87,5 +104,3 @@ const BookCarousel = () => {
 };
 
 export default BookCarousel;
-
-

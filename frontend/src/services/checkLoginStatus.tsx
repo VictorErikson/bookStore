@@ -7,6 +7,7 @@ const getData = async <T,>(url: string, jwt: string): Promise<T> => {
     headers: {
       Authorization: `Bearer ${jwt}`,
     },
+    timeout: 15000,
   });
   return response.data;
 };

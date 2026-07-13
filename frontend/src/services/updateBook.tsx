@@ -16,6 +16,7 @@ const updateBook = async <T,>(bookId: string, likedArray: string[]) => {
       updateData,
       {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
+        timeout: 15000,
       }
     );
     return response.data;

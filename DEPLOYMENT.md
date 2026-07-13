@@ -50,20 +50,32 @@ Local development is unchanged: SQLite + local uploads, `npm run develop` in `ba
 
 From `backend/`, export the local SQLite content, then import it into the cloud services by running the import with the cloud env vars set for that one command:
 
-```bash
+Two important things first:
+
+Stop the running backend (npm run develop) before you start — otherwise SQLite can be locked and the export fails.
+Do the export in a clean terminal first (no cloud vars set). The export reads your local SQLite; the cloud vars are only for the import. If cloud vars are set during export, it'd try to export from the empty Neon DB instead.
+Step 1 — export local data (clean terminal, from backend/)
+
 npm run strapi export -- --no-encrypt -f ../bookstore-export
+This creates bookstore-export.tar.gz in the repo root.
 
-DATABASE_CLIENT=postgres \
-DATABASE_URL="<neon connection string>" \
-DATABASE_SSL=true \
-DATABASE_SSL_REJECT_UNAUTHORIZED=false \
-CLOUDINARY_NAME=<name> \
-CLOUDINARY_KEY=<key> \
-CLOUDINARY_SECRET=<secret> \
-npm run strapi import -- -f ../bookstore-export.tar.gz
-```
+Step 2 — import into Neon + Cloudinary
+Set the cloud vars for this session, then import:
 
-(Git Bash syntax; run from `backend/`.) This pushes all content to Neon and uploads all media to Cloudinary. Afterwards, log into `https://<render-url>/admin` with your existing admin account.
+
+$env:DATABASE_CLIENT="postgres"
+$env:DATABASE_URL="<neon connection string>"
+$env:DATABASE_SSL="true"
+$env:DATABASE_SSL_REJECT_UNAUTHORIZED="false"
+$env:CLOUDINARY_NAME="<name>"
+$env:CLOUDINARY_KEY="<key>"
+$env:CLOUDINARY_SECRET="<secret>"
+
+npm run strapi import -- -f ../bookstore-export.tar.gz --force
+
+This pushes all content to Neon and uploads all media to Cloudinary. 
+
+Afterwards, log into `https://<render-url>/admin` with your existing admin account.
 
 ## 5. GitHub Pages (frontend)
 

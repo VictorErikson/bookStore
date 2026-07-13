@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
-import type { User } from "../../../types/user";
+import { useRef, useState } from "react";
+import type { StarredBook, User } from "../../../types/user";
 import IconHeart from "../../logos/IconHeart";
 import IconHeartFilled from "../../logos/IconHeartFilled";
 import updateBook from "../../../services/updateBook";
 import type { Book, LikedUser } from "../../../types/book";
-import checkLoginStatus from "../../../services/checkLoginStatus";
 import { useAnonData } from "../../../contexts/anonDataContext";
+import { useToast } from "../../../contexts/toastContext";
 
 interface Props {
   user?: User | null;
@@ -17,6 +17,21 @@ interface Props {
   classes?: string;
 }
 
+const toStarredBook = (book: Book): StarredBook => ({
+  id: book.id,
+  documentId: book.documentId,
+  title: book.title,
+  author: book.author,
+  pages: book.pages,
+  releasedate: book.releasedate,
+  createdAt: book.createdAt,
+  updatedAt: book.updatedAt,
+  publishedAt: book.publishedAt ?? "",
+  description: book.description,
+  price: book.price,
+  cover: book.cover,
+});
+
 const LikeBtn: React.FC<Props> = ({
   user,
   book,
@@ -26,48 +41,69 @@ const LikeBtn: React.FC<Props> = ({
   classes,
 }) => {
   const { anonLikes, toggleAnonLike } = useAnonData();
+  const { showToast } = useToast();
+  const pendingRef = useRef(false);
   const likedNow = isLoggedin
     ? user?.starred.some((item) => item.documentId === book.documentId) ??
       false
     : anonLikes.includes(book.documentId);
-  const [isLiked, setIsLiked] = useState(likedNow);
-  useEffect(() => {
-    setIsLiked(likedNow);
-  }, [likedNow]);
   const [isHovered, setIsHovered] = useState(false);
 
   const toggleLike = async (book: Book) => {
-    const toggleUserInLiked = (
-      likedUsers: LikedUser[] = [],
-      user?: User
-    ): LikedUser[] => {
-      const isAlreadyLiked = likedUsers.some(
-        (u) => u.documentId === user?.documentId
-      );
+    if (pendingRef.current || !user) return;
+    pendingRef.current = true;
 
-      setIsLiked(!isAlreadyLiked);
-
-      if (isAlreadyLiked) {
-        return likedUsers.filter((u) => u.documentId !== user?.documentId);
-      } else {
-        return [...likedUsers, user as LikedUser];
-      }
-    };
-
-    const updatedLikes = toggleUserInLiked(book.liked, user ?? undefined);
-
-    await updateBook(
-      book.documentId,
-      updatedLikes.map((u) => u.documentId)
+    const originalLikes = book.liked ?? [];
+    const isAlreadyLiked = originalLikes.some(
+      (u) => u.documentId === user.documentId
     );
+    const updatedLikes = isAlreadyLiked
+      ? originalLikes.filter((u) => u.documentId !== user.documentId)
+      : [...originalLikes, user as LikedUser];
 
     setBooks((prev) =>
       prev.map((b) =>
         b.documentId === book.documentId ? { ...b, liked: updatedLikes } : b
       )
     );
-    const responseUser = await checkLoginStatus();
-    setUser(responseUser);
+    setUser((prev) => {
+      if (!prev) return prev;
+      return isAlreadyLiked
+        ? {
+            ...prev,
+            starred: prev.starred.filter(
+              (s) => s.documentId !== book.documentId
+            ),
+          }
+        : { ...prev, starred: [...prev.starred, toStarredBook(book)] };
+    });
+
+    try {
+      await updateBook(
+        book.documentId,
+        updatedLikes.map((u) => u.documentId)
+      );
+    } catch {
+      setBooks((prev) =>
+        prev.map((b) =>
+          b.documentId === book.documentId ? { ...b, liked: originalLikes } : b
+        )
+      );
+      setUser((prev) => {
+        if (!prev) return prev;
+        return isAlreadyLiked
+          ? { ...prev, starred: [...prev.starred, toStarredBook(book)] }
+          : {
+              ...prev,
+              starred: prev.starred.filter(
+                (s) => s.documentId !== book.documentId
+              ),
+            };
+      });
+      showToast("Couldn't update your favourites, please try again.");
+    } finally {
+      pendingRef.current = false;
+    }
   };
 
   return (
@@ -93,7 +129,7 @@ const LikeBtn: React.FC<Props> = ({
             }
           }}
         >
-          {isLiked ? (
+          {likedNow ? (
             <IconHeartFilled />
           ) : isHovered ? (
             <IconHeartFilled color="#FFFFFF" />

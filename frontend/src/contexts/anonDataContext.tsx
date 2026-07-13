@@ -14,6 +14,7 @@ interface AnonDataContextType {
     value: number,
     ratingDocumentId?: string
   ) => void;
+  removeAnonRating: (bookId: string) => void;
   clearAnonData: () => void;
 }
 
@@ -72,6 +73,15 @@ export const AnonDataProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   };
 
+  const removeAnonRating = (bookId: string) => {
+    setAnonRatings((prev) => {
+      const next = { ...prev };
+      delete next[bookId];
+      localStorage.setItem(RATINGS_KEY, JSON.stringify(next));
+      return next;
+    });
+  };
+
   const clearAnonData = () => {
     localStorage.removeItem(LIKES_KEY);
     localStorage.removeItem(RATINGS_KEY);
@@ -86,6 +96,7 @@ export const AnonDataProvider: React.FC<{ children: React.ReactNode }> = ({
         anonRatings,
         toggleAnonLike,
         setAnonRating,
+        removeAnonRating,
         clearAnonData,
       }}
     >

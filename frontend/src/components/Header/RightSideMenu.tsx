@@ -1,6 +1,7 @@
 import { type RefObject } from "react";
 import type { User } from "../../types/user";
 import IconMenuOpen from "../logos/IconMenuOpen";
+import { USER_CACHE_KEY, clearCache } from "../../services/sessionCache";
 
 interface Props {
   menuIsOpen: boolean;
@@ -32,6 +33,7 @@ const RightSideMenu: React.FC<Props> = ({
 
   const logout = () => {
     sessionStorage.removeItem("token");
+    clearCache(USER_CACHE_KEY);
     setUser(null);
     setIsLoggedin(false);
     setMenuIsOpen(false);
